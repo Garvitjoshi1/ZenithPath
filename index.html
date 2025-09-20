@@ -1,234 +1,279 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- NEW: Add dark class for dark mode as default -->
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraAI - Your Mental Wellness Platform</title>
+    <title>Zenith Path - Your Mental Wellness Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- NEW: Library for confetti effect -->
+    
+    <!-- UI & Animation Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        // NEW: Tailwind dark mode config
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+
     <style>
         body { font-family: 'Inter', sans-serif; }
         .hidden { display: none !important; }
 
-        /* NEW: Aurora Background Effect */
         .aurora-bg {
-            background-color: #a6c1ee;
+            background-color: #f9fafb; /* Light mode base */
+        }
+        .dark .aurora-bg {
+            background-color: #111827; /* Dark base */
             background-image:
-                radial-gradient(at 20% 15%, hsla(212,80%,55%,0.3) 0px, transparent 50%),
-                radial-gradient(at 80% 20%, hsla(289,80%,55%,0.3) 0px, transparent 50%),
-                radial-gradient(at 15% 80%, hsla(180,80%,60%,0.3) 0px, transparent 50%),
-                radial-gradient(at 85% 85%, hsla(30,80%,55%,0.3) 0px, transparent 50%);
+                radial-gradient(at 20% 15%, hsla(212,80%,55%,0.2) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, hsla(289,80%,55%,0.2) 0px, transparent 50%),
+                radial-gradient(at 15% 80%, hsla(180,80%,60%,0.2) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, hsla(30,80%,55%,0.15) 0px, transparent 50%);
             animation: aurora-animation 20s infinite linear;
         }
 
-        @keyframes aurora-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes aurora-animation { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* NEW: Glassmorphism Effect */
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-
-        .chat-container::-webkit-scrollbar, .journal-feed::-webkit-scrollbar { width: 8px; }
-        .chat-container::-webkit-scrollbar-track, .journal-feed::-webkit-scrollbar-track { background: #f1f5f9; }
-        .chat-container::-webkit-scrollbar-thumb, .journal-feed::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-        .chat-container::-webkit-scrollbar-thumb:hover, .journal-feed::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .dark .glass-card {
+            background: rgba(31, 41, 55, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
         
-        /* NEW: Streak Calendar Flame animation */
-        .flame-icon { transition: all 0.3s ease; }
-        .flame-icon.active { color: #f97316; transform: scale(1.2); text-shadow: 0 0 10px #f97316; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
+        
+        .flame-icon.active { 
+            color: #f97316; 
+            animation: pulse-flame 2s infinite ease-in-out;
+        }
+        @keyframes pulse-flame {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 10px #f97316, 0 0 20px #f97316; }
+            50% { transform: scale(1.1); text-shadow: 0 0 20px #f97316, 0 0 40px #ef4444; }
+        }
 
+        .breathing-circle {
+            width: 200px; height: 200px; border-radius: 50%;
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 40px rgba(102, 166, 255, 0.6);
+            transition: transform 0.5s ease-out;
+        }
+        .breathing-circle.breathing { animation: breathe 10s infinite ease-in-out; }
+        @keyframes breathe {
+            0%   { transform: scale(1); } 40%  { transform: scale(1.5); }
+            60%  { transform: scale(1.5); } 100% { transform: scale(1); }
+        }
     </style>
 </head>
-<body class="bg-slate-50 antialiased">
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-white/90 antialiased">
 
-    <div id="app-container" class="w-full h-screen bg-white flex flex-col">
+    <div id="app-container" class="w-full h-screen flex flex-col">
 
-        <!-- ==================================================== -->
-        <!-- ============== AUTHENTICATION PAGE ================= -->
-        <!-- ==================================================== -->
-        <div id="auth-page" class="flex flex-col items-center justify-center h-full p-6 aurora-bg">
-            <div class="text-center mb-10">
-                <h1 class="text-5xl font-extrabold text-white" style="text-shadow: 0 2px 10px rgba(0,0,0,0.2);">AuraAI</h1>
-                <p class="text-white/80 mt-2">Find your calm in the chaos.</p>
+        <!-- AUTHENTICATION PAGE -->
+        <div id="auth-page" class="flex flex-col items-center justify-center h-full p-6 bg-white dark:aurora-bg">
+             <div class="absolute top-6 right-6">
+                <button id="auth-theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800/50 text-slate-700 dark:text-white/70">
+                    <i data-lucide="sun" class="hidden dark:block"></i>
+                    <i data-lucide="moon" class="dark:hidden"></i>
+                </button>
             </div>
-            <!-- NEW: Glass effect container for the form -->
-            <div class="w-full max-w-sm p-8 rounded-2xl glass-effect space-y-4">
-                <div id="auth-error" class="hidden p-3 bg-red-500/50 text-white rounded-lg text-sm"></div>
+            <div class="text-center mb-10">
+                <h1 class="text-5xl font-extrabold text-slate-800 dark:text-white" style="text-shadow: 0 2px 10px rgba(0,0,0,0.1);">Zenith Path</h1>
+                <p class="text-slate-600 dark:text-white/70 mt-2">Find your calm, reach your peak.</p>
+            </div>
+            <div class="w-full max-w-sm p-8 rounded-2xl glass-card space-y-4">
+                <div id="auth-error" class="hidden p-3 bg-red-500/80 text-white rounded-lg text-sm"></div>
                 <!-- Login Form -->
                 <div id="login-form">
-                    <input type="email" id="login-email" placeholder="Email" class="w-full px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
-                    <input type="password" id="login-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
-                    <button id="login-btn" class="w-full mt-6 bg-white text-blue-600 font-bold py-3 rounded-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105">Login</button>
-                    <div class="relative my-6">
-                        <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-white/30"></span></div>
-                        <div class="relative flex justify-center text-xs uppercase"><span class="bg-transparent px-2 text-white/70" style="backdrop-filter: blur(12px);">Or continue with</span></div>
-                    </div>
-                    <button id="google-login-btn" class="w-full bg-white text-slate-700 font-medium py-3 rounded-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
-                        Sign in with Google
-                    </button>
-                    <p class="text-center text-sm text-white/80 mt-6">Don't have an account? <a href="#" id="show-signup" class="font-bold text-white hover:underline">Sign Up</a></p>
+                    <input type="email" id="login-email" placeholder="Email" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="password" id="login-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <button id="login-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Login</button>
+                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-gray-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or continue with</span></div></div>
+                    <button id="google-login-btn" class="w-full bg-white/90 text-slate-800 font-medium py-3 rounded-lg hover:bg-white transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300 dark:border-transparent"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign in with Google</button>
+                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Don't have an account? <a href="#" id="show-signup" class="font-bold text-indigo-500 dark:text-white hover:underline">Sign Up</a></p>
                 </div>
-                <!-- Signup Form -->
                 <div id="signup-form" class="hidden">
-                    <input type="text" id="signup-username" placeholder="Username" class="w-full px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
-                    <input type="email" id="signup-email" placeholder="Email" class="w-full mt-3 px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
-                    <input type="password" id="signup-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
-                    <button id="signup-btn" class="w-full mt-6 bg-white text-blue-600 font-bold py-3 rounded-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105">Create Account</button>
-                    <div class="relative my-6">
-                        <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-white/30"></span></div>
-                        <div class="relative flex justify-center text-xs uppercase"><span class="bg-transparent px-2 text-white/70" style="backdrop-filter: blur(12px);">Or sign up with</span></div>
-                    </div>
-                     <button id="google-signup-btn" class="w-full bg-white text-slate-700 font-medium py-3 rounded-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
-                        Sign up with Google
-                    </button>
-                    <p class="text-center text-sm text-white/80 mt-6">Already have an account? <a href="#" id="show-login" class="font-bold text-white hover:underline">Login</a></p>
+                    <input type="text" id="signup-username" placeholder="Username" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="email" id="signup-email" placeholder="Email" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="password" id="signup-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <button id="signup-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Create Account</button>
+                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-gray-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or sign up with</span></div></div>
+                    <button id="google-signup-btn" class="w-full bg-white/90 text-slate-800 font-medium py-3 rounded-lg hover:bg-white transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300 dark:border-transparent"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign up with Google</button>
+                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Already have an account? <a href="#" id="show-login" class="font-bold text-indigo-500 dark:text-white hover:underline">Login</a></p>
                 </div>
-            </div>
-            <div id="auth-loading" class="hidden mt-4">
-                <p class="text-white/80">Loading...</p>
             </div>
         </div>
 
-        <!-- ==================================================== -->
-        <!-- ================= MAIN APP PAGE ==================== -->
-        <!-- ==================================================== -->
-        <div id="main-app-page" class="hidden flex-col h-full bg-slate-50">
-             <header class="bg-white p-4 flex justify-between items-center border-b sticky top-0 z-10">
-                <h1 class="text-xl font-bold text-blue-600">AuraAI</h1>
-                <div>
-                    <span id="welcome-user" class="text-slate-600 mr-4 text-sm font-medium"></span>
-                    <button id="logout-btn" class="text-sm text-slate-500 hover:text-blue-600">Logout</button>
+        <!-- MAIN APP PAGE -->
+        <div id="main-app-page" class="hidden flex-col h-full aurora-bg">
+             <header class="bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg p-4 flex justify-between items-center border-b border-black/10 dark:border-white/10 sticky top-0 z-20">
+                <h1 class="text-xl font-bold text-slate-800 dark:text-white">Zenith Path</h1>
+                <div class="flex items-center space-x-4">
+                    <span id="welcome-user" class="text-slate-700 dark:text-white/80 text-sm font-medium hidden sm:block"></span>
+                    <button id="theme-toggle" class="p-2 rounded-full text-slate-700 dark:text-white/70">
+                        <i data-lucide="sun" class="hidden dark:block"></i>
+                        <i data-lucide="moon" class="dark:hidden"></i>
+                    </button>
+                    <img id="header-pfp" src="https://placehold.co/40x40/1f2937/FFF?text=ZP" class="w-8 h-8 rounded-full object-cover border-2 border-white/20 cursor-pointer" title="Go to Profile">
+                    <button id="logout-btn" title="Logout"><i data-lucide="log-out" class="w-5 h-5 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white"></i></button>
                 </div>
             </header>
 
-            <main class="flex-1 overflow-y-auto">
-                <!-- ============ CHATBOT CONTENT =========== -->
-                <div id="chat-page" class="flex flex-col h-full">
-                     <main id="chat-container" class="flex-1 p-6 overflow-y-auto chat-container">
-                        <div class="flex justify-start mb-4">
-                            <div class="bg-blue-100 text-slate-800 p-3 rounded-lg max-w-md shadow"><p class="text-sm">Hello! I'm AuraAI. How are you feeling today?</p></div>
-                        </div>
+            <main class="flex-1 overflow-y-auto custom-scrollbar">
+                <!-- Chat Page -->
+                <div id="chat-page" class="page-content flex flex-col h-full">
+                     <main id="chat-container" class="flex-1 p-6 overflow-y-auto custom-scrollbar">
+                        <div class="flex justify-start mb-4 chat-bubble"><div class="glass-card p-3 rounded-lg max-w-md shadow-lg bg-gray-200 dark:bg-gray-800/25"><p class="text-sm">Hello! I'm your companion on the path to wellness. How are you feeling today?</p></div></div>
                     </main>
-                    <div id="loading-indicator" class="px-6 pb-2 hidden">
-                        <div class="flex items-center justify-start"><div class="bg-slate-200 p-3 rounded-lg shadow animate-pulse"><div class="flex items-center space-x-2"><div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div><div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div></div></div></div>
-                    </div>
-                    <footer class="p-4 bg-white/80 backdrop-blur-sm border-t sticky bottom-0">
-                        <div class="flex items-center">
-                            <input type="text" id="user-input" placeholder="Type your message..." class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <button id="send-btn" class="ml-3 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-transform duration-200 hover:scale-110">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <div id="loading-indicator" class="px-6 pb-2 hidden"><div class="flex items-center justify-start"><div class="glass-card p-3 rounded-lg shadow-lg animate-pulse"><div class="flex items-center space-x-2"><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-200"></div><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-400"></div></div></div></div></div>
+                    <footer class="p-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg border-t border-black/10 dark:border-white/10 sticky bottom-0"><div class="flex items-center"><input type="text" id="user-input" placeholder="Type your message..." class="flex-1 px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"><button id="send-btn" class="ml-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]"><i data-lucide="send"></i></button></div></footer>
+                </div>
+
+                <!-- Streaks Page -->
+                <div id="streaks-page" class="page-content hidden p-6"><div class="w-full max-w-3xl mx-auto"><h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4">Your Wellness Streak</h2><div class="glass-card p-6 rounded-2xl text-center shadow-lg relative overflow-hidden"><p class="text-lg text-slate-700 dark:text-white/70">Current Streak</p><p id="streak-count" class="text-7xl font-extrabold my-2 text-slate-900 dark:text-white">0</p><p class="text-slate-700 dark:text-white/70">days of checking in!</p><button id="checkin-btn" class="mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.6)]">Check-in for Today</button></div><div id="quote-container" class="hidden mt-6 bg-green-500/10 border-l-4 border-green-400 text-green-700 dark:text-green-300 p-4 rounded-md"><p class="font-bold">Way to go!</p><p id="quote-text" class="text-sm"></p></div><div class="mt-8 glass-card p-4 rounded-xl"><h3 class="text-xl font-bold text-slate-800 dark:text-white mb-3">This Month's Progress</h3><div id="streak-calendar" class="grid grid-cols-7 gap-y-3 text-center text-lg text-slate-500 dark:text-white/50"></div></div></div></div>
+                
+                <!-- Breathe Page -->
+                <div id="breathe-page" class="page-content hidden p-6"><div class="w-full max-w-3xl mx-auto text-center flex flex-col items-center justify-center h-full"><h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">A Moment of Calm</h2><div class="breathing-circle"><span id="breathe-text" class="text-white text-2xl font-bold">Ready?</span></div><p id="breathe-timer" class="text-slate-600 dark:text-white/60 mt-6 text-lg">2-Minute Session</p><div class="mt-6 flex space-x-4"><button id="start-breathe-btn" class="bg-gradient-to-r from-green-400 to-teal-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(16,185,129,0.5)]">Start</button><button id="stop-breathe-btn" class="hidden bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(239,68,68,0.5)]">Stop</button></div></div></div>
+                
+                <!-- Community Page -->
+                <div id="community-page" class="page-content hidden p-6">
+                     <div class="w-full max-w-3xl mx-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Community Wall</h2>
+                            <button id="open-post-modal-btn" class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)] flex items-center space-x-2">
+                                <i data-lucide="plus"></i>
+                                <span>Create Post</span>
                             </button>
                         </div>
-                    </footer>
-                </div>
-
-                <!-- ============ STREAKS CONTENT =========== -->
-                <div id="streaks-page" class="hidden p-6">
-                    <div class="w-full max-w-3xl mx-auto">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Your Wellness Streak</h2>
-                        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-xl text-center shadow-lg text-white relative overflow-hidden">
-                            <p class="text-lg opacity-80">Current Streak</p>
-                            <p id="streak-count" class="text-7xl font-extrabold my-2">0</p>
-                            <p class="opacity-80">days of checking in!</p>
-                            <button id="checkin-btn" class="mt-6 bg-white text-blue-600 font-bold px-8 py-3 rounded-full hover:bg-white/90 transition transform hover:scale-105">Check-in for Today</button>
-                        </div>
-
-                        <div id="quote-container" class="hidden mt-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
-                            <p class="font-bold">Way to go!</p>
-                            <p id="quote-text" class="text-sm"></p>
-                        </div>
-
-                         <div class="mt-8">
-                            <h3 class="text-xl font-bold text-slate-700 mb-3">This Month's Progress</h3>
-                            <div id="streak-calendar" class="grid grid-cols-7 gap-y-3 text-center text-lg text-slate-400">
-                               <!-- Calendar will be generated by JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- =========== NEW: JOURNAL CONTENT =========== -->
-                <div id="journal-page" class="hidden p-6">
-                    <div class="w-full max-w-3xl mx-auto flex flex-col flex-1 h-full">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Private Journal</h2>
-                        <div class="bg-white p-4 rounded-lg shadow-md">
-                            <textarea id="journal-entry-content" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="6" placeholder="Write about your thoughts and feelings..."></textarea>
-                            <button id="save-journal-entry-btn" class="mt-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Save Entry</button>
-                        </div>
-                        <div id="journal-feed" class="mt-6 space-y-4 flex-1 overflow-y-auto journal-feed pr-2">
-                            <!-- Journal entries will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- =========== COMMUNITY CONTENT =========== -->
-                <div id="community-page" class="hidden p-6">
-                    <div class="w-full max-w-3xl mx-auto">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Community Wall</h2>
-                        <div class="bg-white p-4 rounded-lg shadow-md">
-                            <textarea id="post-content" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Share a positive thought or your progress..."></textarea>
-                            <div class="flex justify-between items-center mt-2">
-                                <button id="inspire-me-btn" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition text-sm">✨ Inspire Me</button>
-                                <button id="create-post-btn" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Post to Wall</button>
-                            </div>
-                        </div>
                         <div id="community-feed" class="mt-6 space-y-4">
-                            <!-- Posts will be loaded here -->
+                            <!-- Community posts loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resources Page -->
+                 <div id="resources-page" class="page-content hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Help is Always Available</h2>
+                        <p class="text-slate-600 dark:text-white/70 mb-6">If you are in distress, please reach out. You are not alone. Here are some trusted organizations in India that can help.</p>
+                        <div class="space-y-4">
+                            <div class="glass-card p-5 rounded-lg shadow-lg border-l-4 border-blue-400">
+                                <h3 class="font-bold text-lg text-slate-800 dark:text-white">iCALL Psychosocial Helpline</h3>
+                                <p class="text-sm text-slate-600 dark:text-white/70 my-2">Provides free telephone and email-based counseling services, run by the Tata Institute of Social Sciences (TISS).</p>
+                                <div class="text-sm"><span class="font-semibold">Phone:</span> <a href="tel:9152987821" class="text-blue-600 dark:text-blue-400 hover:underline">9152987821</a> | <span class="font-semibold">Website:</span> <a href="http://icallhelpline.org/" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">icallhelpline.org</a></div>
+                            </div>
+                            <div class="glass-card p-5 rounded-lg shadow-lg border-l-4 border-green-400">
+                                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Aasra</h3>
+                                <p class="text-sm text-slate-600 dark:text-white/70 my-2">A 24/7 helpline for those who are distressed, depressed, or feeling suicidal. They offer professional and confidential support.</p>
+                                <div class="text-sm"><span class="font-semibold">Phone:</span> <a href="tel:9820466726" class="text-blue-600 dark:text-blue-400 hover:underline">9820466726</a> | <span class="font-semibold">Website:</span> <a href="http://www.aasra.info/" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">aasra.info</a></div>
+                            </div>
+                            <div class="glass-card p-5 rounded-lg shadow-lg border-l-4 border-purple-400">
+                                <h3 class="font-bold text-lg text-slate-800 dark:text-white">The Live Love Laugh Foundation</h3>
+                                <p class="text-sm text-slate-600 dark:text-white/70 my-2">Founded by Deepika Padukone, this foundation provides resources, information, and a directory of mental health professionals across India.</p>
+                                <div class="text-sm"><span class="font-semibold">Website:</span> <a href="https://www.thelivelovelaughfoundation.org/" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">thelivelovelaughfoundation.org</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div id="profile-page" class="page-content hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">Your Profile</h2>
+                        <div class="glass-card p-8 rounded-2xl flex flex-col items-center sm:flex-row sm:items-start space-y-6 sm:space-y-0 sm:space-x-8">
+                            <div class="relative group">
+                                <img id="profile-pic-preview" src="https://placehold.co/150x150/1f2937/FFF?text=+" class="w-36 h-36 rounded-full object-cover border-2 border-gray-300 dark:border-white/20">
+                                <label for="pfp-upload" class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <i data-lucide="camera" class="w-8 h-8"></i>
+                                </label>
+                                <input type="file" id="pfp-upload" class="hidden" accept="image/*">
+                            </div>
+                            <div class="flex-1 w-full">
+                                <div>
+                                    <label for="profile-username" class="text-sm text-slate-600 dark:text-white/70">Username</label>
+                                    <input type="text" id="profile-username" class="mt-1 w-full px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                </div>
+                                <div class="mt-4">
+                                    <label for="profile-bio" class="text-sm text-slate-600 dark:text-white/70">Your Bio</label>
+                                    <textarea id="profile-bio" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="A short bio about your wellness journey..."></textarea>
+                                </div>
+                                <button id="save-profile-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]">Save Changes</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </main>
 
-            <!-- NEW: Navigation with Icons -->
-            <nav class="flex justify-around bg-white/70 backdrop-blur-sm p-2 border-t sticky bottom-0 z-10">
-                <button data-page="chat-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 hover:bg-blue-100 hover:text-blue-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                    <span class="text-xs mt-1">Chat</span>
-                </button>
-                <button data-page="streaks-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 hover:bg-blue-100 hover:text-blue-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.657 7.343A8 8 0 0117.657 18.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1014.12 11.88l-4.242 4.242z"></path></svg>
-                    <span class="text-xs mt-1">Streaks</span>
-                </button>
-                <!-- NEW: Journal Nav Button -->
-                <button data-page="journal-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 hover:bg-blue-100 hover:text-blue-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-5.247-8.995l-1.506 1.506a5.002 5.002 0 000 7.072l.15 .15a5.002 5.002 0 007.072 0l1.506-1.506M9 19.5l-2-2m5.247-8.995l1.506-1.506a5.002 5.002 0 010-7.072l-.15-.15a5.002 5.002 0 01-7.072 0L5.005 9.505"></path></svg>
-                    <span class="text-xs mt-1">Journal</span>
-                </button>
-                <button data-page="community-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 hover:bg-blue-100 hover:text-blue-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <span class="text-xs mt-1">Community</span>
-                </button>
+            <!-- Navigation -->
+            <nav class="flex justify-around bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg p-2 border-t border-black/10 dark:border-white/10 sticky bottom-0 z-20">
+                <button data-page="chat-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="message-circle"></i><span class="text-xs mt-1">Chat</span></button>
+                <button data-page="streaks-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="flame"></i><span class="text-xs mt-1">Streaks</span></button>
+                <button data-page="breathe-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="wind"></i><span class="text-xs mt-1">Breathe</span></button>
+                <button data-page="community-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="users"></i><span class="text-xs mt-1">Community</span></button>
+                <button data-page="resources-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="life-buoy"></i><span class="text-xs mt-1">Resources</span></button>
+                <button data-page="profile-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="user-circle"></i><span class="text-xs mt-1">Profile</span></button>
             </nav>
         </div>
     </div>
+
+    <!-- Create Post Modal -->
+    <div id="post-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+            <button id="close-post-modal-btn" class="absolute top-4 right-4 text-slate-500 dark:text-white/60 hover:text-slate-800 dark:hover:text-white">
+                <i data-lucide="x"></i>
+            </button>
+            <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-4">Create a New Post</h2>
+            
+            <textarea id="modal-post-content" class="w-full p-2 h-28 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Share your thoughts..."></textarea>
+            
+            <div class="mt-4">
+                <img id="modal-image-preview" src="" class="hidden w-full max-h-48 object-contain rounded-lg mb-2">
+                <label for="modal-image-upload" class="cursor-pointer text-sm text-indigo-500 dark:text-indigo-400 font-semibold hover:underline flex items-center space-x-2">
+                    <i data-lucide="image-plus"></i>
+                    <span>Add Image</span>
+                </label>
+                <input type="file" id="modal-image-upload" class="hidden" accept="image/*">
+            </div>
+
+            <div class="mt-4 border-t border-black/10 dark:border-white/10 pt-4">
+                <h3 class="text-sm font-semibold text-slate-600 dark:text-white/70 mb-2">Feeling proud? Share your streak!</h3>
+                <div id="streak-templates-container" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <button id="create-post-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]">Post to Community</button>
+        </div>
+    </div>
+
 
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // --- UPDATED: Your Firebase Configuration ---
+        // IMPORTANT: Add your Firebase project's configuration object here
         const firebaseConfig = {
             apiKey: "AIzaSyDViVrJ9agi89g7cG51SVP9ECHDk5YNGoM",
             authDomain: "auraai-472617.firebaseapp.com",
             projectId: "auraai-472617",
-            storageBucket: "auraai-472617.appspot.com", // Corrected to standard .appspot.com format
+            storageBucket: "auraai-472617.appspot.com",
             messagingSenderId: "1077227113610",
-            appId: "1:10772210:web:846934fd5147f430a07173",
+            appId: "1:1077227113610:web:846934fd5147f430a07173",
             measurementId: "G-PY62KH8QGE"
         };
         
@@ -239,10 +284,25 @@
         let currentUser = null;
         let userData = null;
 
-        const authPage = document.getElementById('auth-page');
-        const mainAppPage = document.getElementById('main-app-page');
-        // ... (rest of the element selectors are the same)
+        // --- THEME TOGGLE ---
+        const themeToggleBtns = document.querySelectorAll('#theme-toggle, #auth-theme-toggle');
+        const htmlEl = document.documentElement;
 
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            htmlEl.classList.toggle('dark', savedTheme === 'dark');
+        }
+
+        themeToggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                htmlEl.classList.toggle('dark');
+                const isDark = htmlEl.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                lucide.createIcons();
+            });
+        });
+
+        // --- Master Auth State Change Handler ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -250,39 +310,37 @@
                 const userDocSnap = await getDoc(userDocRef);
                 if (userDocSnap.exists()) {
                     userData = userDocSnap.data();
-                    document.getElementById('welcome-user').textContent = `Hi, ${userData.username}!`;
-                    setupAppForUser();
-                } else { // Handle case where Google user signs in for first time after auth is added
-                     await setDoc(doc(db, "users", user.uid), {
-                        username: user.displayName || 'Aura User',
-                        email: user.email,
-                        streak: 0,
-                        lastCheckIn: null,
-                        checkInHistory: []
-                    });
-                     const newUserDocSnap = await getDoc(userDocRef);
-                     userData = newUserDocSnap.data();
-                     document.getElementById('welcome-user').textContent = `Hi, ${userData.username}!`;
-                     setupAppForUser();
+                } else { 
+                     const newUserData = {
+                        username: user.displayName || 'Zenith User', email: user.email,
+                        streak: 0, lastCheckIn: null, checkInHistory: [],
+                        bio: "", profilePicUrl: ""
+                    };
+                     await setDoc(doc(db, "users", user.uid), newUserData);
+                     userData = newUserData;
                 }
-                authPage.classList.add('hidden');
-                mainAppPage.classList.remove('hidden');
-                mainAppPage.classList.add('flex');
+                document.getElementById('welcome-user').textContent = `Hi, ${userData.username}!`;
+                document.getElementById('header-pfp').src = userData.profilePicUrl || `https://placehold.co/40x40/1f2937/FFF?text=${(userData.username || 'Z').charAt(0)}`;
+                
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('main-app-page').classList.remove('hidden');
+                document.getElementById('main-app-page').classList.add('flex');
+                setupAppForUser();
             } else {
                 currentUser = null; userData = null;
-                authPage.classList.remove('hidden');
-                mainAppPage.classList.add('hidden');
-                mainAppPage.classList.remove('flex');
+                document.getElementById('auth-page').classList.remove('hidden');
+                document.getElementById('main-app-page').classList.add('hidden');
             }
         });
         
-        // --- Auth UI Logic (same as before) ---
+        // --- Auth UI & Functions ---
         const loginForm = document.getElementById('login-form');
         const signupForm = document.getElementById('signup-form');
-        document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.add('hidden'); signupForm.classList.remove('hidden'); });
-        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); signupForm.classList.add('hidden'); loginForm.classList.remove('hidden'); });
         const authError = document.getElementById('auth-error');
         const showAuthError = (message) => { authError.textContent = message; authError.classList.remove('hidden'); };
+        document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.add('hidden'); signupForm.classList.remove('hidden'); });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); signupForm.classList.add('hidden'); loginForm.classList.remove('hidden'); });
+        
         document.getElementById('signup-btn').addEventListener('click', async () => { 
             const username = document.getElementById('signup-username').value;
             const email = document.getElementById('signup-email').value;
@@ -290,7 +348,8 @@
             if (!username || !email || !password) { showAuthError("Please fill in all fields."); return; }
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await setDoc(doc(db, "users", userCredential.user.uid), { username, email, streak: 0, lastCheckIn: null, checkInHistory: [] });
+                const newUserData = { username, email, streak: 0, lastCheckIn: null, checkInHistory: [], bio: "", profilePicUrl: "" };
+                await setDoc(doc(db, "users", userCredential.user.uid), newUserData);
             } catch (error) { showAuthError(error.message); }
         });
         document.getElementById('login-btn').addEventListener('click', async () => {
@@ -299,49 +358,63 @@
             if (!email || !password) { showAuthError("Please fill in all fields."); return; }
             try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { showAuthError(error.message); }
         });
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-
+         document.getElementById('logout-btn').addEventListener('click', () => {
+             Swal.fire({
+                title: 'Are you sure?', text: "You will be logged out.", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, logout', 
+                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff', 
+                color: htmlEl.classList.contains('dark') ? '#ffffff' : '#000000'
+            }).then((result) => { if (result.isConfirmed) { signOut(auth); } })
+        });
         const handleGoogleSignIn = async () => {
             authError.classList.add('hidden');
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-            } catch (error) {
-                showAuthError(error.message);
-            }
+            try { await signInWithPopup(auth, googleProvider); } catch (error) { showAuthError(error.message); }
         };
-
         document.getElementById('google-login-btn').addEventListener('click', handleGoogleSignIn);
         document.getElementById('google-signup-btn').addEventListener('click', handleGoogleSignIn);
-
+        document.getElementById('header-pfp').addEventListener('click', () => showPage('profile-page'));
 
         function setupAppForUser() {
-            showPage('chat-page');
+            lucide.createIcons();
+            showPage('streaks-page');
             setupStreaks();
+            setupProfile();
             setupCommunity();
-            setupJournal(); // NEW: Setup journal on login
         }
         
+        // --- Page Navigation with GSAP Animation ---
         const navButtons = document.querySelectorAll('.nav-btn');
-        const contentPages = document.querySelectorAll('#main-app-page main > div');
+        const contentPages = document.querySelectorAll('.page-content');
+        let currentPageId = null;
         function showPage(pageId) {
-            contentPages.forEach(page => page.classList.add('hidden'));
-            const targetPage = document.getElementById(pageId);
-            targetPage.classList.remove('hidden');
-            if (pageId === 'chat-page' || pageId === 'journal-page') { 
-                targetPage.classList.add('flex', 'flex-col', 'h-full'); 
+            if (pageId === currentPageId) return;
+            const oldPage = document.getElementById(currentPageId);
+            const newPage = document.getElementById(pageId);
+            
+            if (oldPage) {
+                gsap.to(oldPage, { autoAlpha: 0, y: 10, duration: 0.2, onComplete: () => oldPage.classList.add('hidden') });
             }
+            
+            newPage.classList.remove('hidden');
+            gsap.fromTo(newPage, { autoAlpha: 0, y: -10 }, { autoAlpha: 1, y: 0, duration: 0.2, delay: oldPage ? 0.2 : 0 });
+           
+            if (['chat-page', 'breathe-page'].includes(pageId)) { newPage.classList.add('flex', 'flex-col', 'h-full'); }
+            
             navButtons.forEach(btn => {
-                if (btn.dataset.page === pageId) {
-                    btn.classList.add('bg-blue-100', 'text-blue-700');
-                    btn.classList.remove('text-slate-600');
-                } else {
-                    btn.classList.remove('bg-blue-100', 'text-blue-700');
-                    btn.classList.add('text-slate-600');
-                }
+                const isSelected = btn.dataset.page === pageId;
+                btn.classList.toggle('bg-black/5', !htmlEl.classList.contains('dark') && isSelected);
+                btn.classList.toggle('dark:bg-white/10', htmlEl.classList.contains('dark') && isSelected);
+                btn.classList.toggle('text-slate-900', !htmlEl.classList.contains('dark') && isSelected);
+                btn.classList.toggle('dark:text-white', htmlEl.classList.contains('dark') && isSelected);
+                btn.classList.toggle('text-slate-600', !htmlEl.classList.contains('dark') && !isSelected);
+                btn.classList.toggle('dark:text-white/60', htmlEl.classList.contains('dark') && !isSelected);
             });
+            currentPageId = pageId;
         }
         navButtons.forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
 
+        // --- Gemini API Setup ---
         const API_KEY = "AIzaSyB-FsGJMQy68G8bB2caJ1LwS4thyLT7KUQ";
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
         
@@ -350,19 +423,11 @@
         const sendBtn = document.getElementById('send-btn');
         const chatContainer = document.getElementById('chat-container');
         const loadingIndicator = document.getElementById('loading-indicator');
+        const CHATBOT_SYSTEM_PROMPT = `You are an empathetic companion for young adults in India. Your personality is warm, kind, and understanding. You are NOT a therapist. If a user expresses severe distress or self-harm thoughts, you MUST immediately guide them to a professional helpline like iCALL (9152987821) or Aasra (9820466726). Keep responses concise.`;
         
-        // ENHANCED: More detailed system prompt for safety and clarity
-        const CHATBOT_SYSTEM_PROMPT = `You are AuraAI, a supportive and empathetic companion for young adults in India. Your personality is warm, kind, non-judgmental, and understanding.
-        RULES:
-        1.  **You are NOT a therapist or a medical professional.** You cannot provide diagnosis, treatment, or medical advice.
-        2.  Your primary role is to be an active listener, provide a safe space to talk, and offer general, positive encouragement. Use phrases like "It sounds like that's really tough," or "Thank you for sharing that with me."
-        3.  If a user expresses thoughts of self-harm, crisis, or severe distress, you MUST IMMEDIATELY and gently guide them to professional help. Respond with: "It sounds like you are going through a lot right now, and it's really brave of you to talk about it. For immediate support, it's best to connect with a professional who can help. Please consider reaching out to a helpline like iCALL (9152987821) or Aasra (9820466726). They are there to listen." Do not engage further on the topic.
-        4.  Keep responses concise and easy to read on a mobile screen. Use formatting like bolding for emphasis where appropriate.
-        5.  Be culturally sensitive to the context of Indian youth.`;
-        
-        async function getAuraResponse(message) { 
+        async function getAuraResponse(message) {
             loadingIndicator.classList.remove('hidden');
-            try {
+             try {
                 const payload = { systemInstruction: { parts: [{ text: CHATBOT_SYSTEM_PROMPT }] }, contents: [{ parts: [{ text: message }] }] };
                 const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
@@ -374,40 +439,47 @@
         }
         function addMessageToChat(message, sender) { 
             const msgDiv = document.createElement('div');
-            msgDiv.className = `flex mb-4 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
-            msgDiv.innerHTML = `<div class="p-3 rounded-lg max-w-md shadow ${sender === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-800'}"><p class="text-sm">${message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p></div>`;
+            msgDiv.className = `flex mb-4 chat-bubble ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            msgDiv.innerHTML = `<div class="glass-card p-3 rounded-xl max-w-md shadow-lg ${sender === 'user' ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white' : 'bg-gray-200 dark:bg-gray-800/25'}"><p class="text-sm">${message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p></div>`;
             chatContainer.appendChild(msgDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
+            gsap.from(msgDiv, { opacity: 0, y: 20, duration: 0.5, ease: "power3.out" });
         }
         function handleSend() { const message = userInput.value.trim(); if (message) { addMessageToChat(message, 'user'); userInput.value = ''; getAuraResponse(message); } }
         sendBtn.addEventListener('click', handleSend);
         userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
 
-        // --- Streaks Logic with Gamification (same as before) ---
+        // --- Streaks Logic ---
         const streakCountEl = document.getElementById('streak-count');
         const checkinBtn = document.getElementById('checkin-btn');
         const calendarEl = document.getElementById('streak-calendar');
         const quoteContainer = document.getElementById('quote-container');
         const quoteTextEl = document.getElementById('quote-text');
-        const motivationalQuotes = ["Believe you can and you're halfway there.", "The secret of getting ahead is getting started.", "It does not matter how slowly you go as long as you do not stop.", "The only way to do great work is to love what you do.", "Your limitation—it's only your imagination."];
-        function isSameDay(date1, date2) { return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate(); }
+        const motivationalQuotes = ["Believe you can and you're halfway there.", "The secret of getting ahead is getting started.", "Your limitation—it's only your imagination."];
+        function isSameDay(d1, d2) { return d1 && d2 && d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
+        
         function setupStreaks() {
-            streakCountEl.textContent = userData.streak || 0;
+            const currentStreak = userData.streak || 0;
+            let start = { val: parseInt(streakCountEl.textContent) || 0 };
+            gsap.to(start, { duration: 1, val: currentStreak, onUpdate: () => { streakCountEl.textContent = Math.round(start.val); } });
+
             const today = new Date();
             const lastCheckInDate = userData.lastCheckIn ? userData.lastCheckIn.toDate() : null;
+
             if (lastCheckInDate && isSameDay(today, lastCheckInDate)) {
                 checkinBtn.disabled = true;
                 checkinBtn.textContent = "Checked-in Today!";
-                checkinBtn.classList.remove('bg-white', 'text-blue-600');
-                checkinBtn.classList.add('bg-green-500', 'text-white', 'cursor-not-allowed');
+                checkinBtn.classList.remove('bg-gradient-to-r');
+                checkinBtn.classList.add('bg-green-600', 'cursor-not-allowed');
             } else {
                  checkinBtn.disabled = false;
                  checkinBtn.textContent = "Check-in for Today";
-                 checkinBtn.classList.add('bg-white', 'text-blue-600');
-                 checkinBtn.classList.remove('bg-green-500', 'text-white', 'cursor-not-allowed');
+                 checkinBtn.classList.add('bg-gradient-to-r');
+                 checkinBtn.classList.remove('bg-green-600', 'cursor-not-allowed');
             }
             renderCalendar();
         }
+
         checkinBtn.addEventListener('click', async () => {
             confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
             const today = new Date();
@@ -418,25 +490,27 @@
             if(lastCheckInDate && isSameDay(yesterday, lastCheckInDate)) { newStreak = userData.streak + 1; }
             else if (lastCheckInDate && isSameDay(today, lastCheckInDate)) { return; }
             const userDocRef = doc(db, "users", currentUser.uid);
-            const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
-            const newHistory = [...(new Set(userData.checkInHistory || [])), todayStr];
-            await setDoc(userDocRef, { streak: newStreak, lastCheckIn: serverTimestamp(), checkInHistory: newHistory }, { merge: true });
+            const todayStr = today.toISOString().split('T')[0];
+            const newHistory = [...new Set([...(userData.checkInHistory || []), todayStr])];
+            
+            await updateDoc(userDocRef, { streak: newStreak, lastCheckIn: serverTimestamp(), checkInHistory: newHistory });
             
             userData.streak = newStreak;
             userData.lastCheckIn = { toDate: () => new Date() };
             userData.checkInHistory = newHistory;
-            streakCountEl.textContent = newStreak;
+            
             quoteTextEl.textContent = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
             quoteContainer.classList.remove('hidden');
             setupStreaks();
         });
-        function renderCalendar() { /* ... same as before ... */
-             calendarEl.innerHTML = '';
+
+        function renderCalendar() {
+            calendarEl.innerHTML = '';
             const today = new Date();
             const month = today.getMonth();
             const year = today.getFullYear();
             const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            dayNames.forEach(day => calendarEl.innerHTML += `<div class='font-bold text-slate-500 text-xs'>${day}</div>`);
+            dayNames.forEach(day => calendarEl.innerHTML += `<div class='font-bold text-xs'>${day}</div>`);
             const firstDayOfMonth = new Date(year, month, 1).getDay();
             for(let i=0; i < firstDayOfMonth; i++) { calendarEl.appendChild(document.createElement('div')); }
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -444,133 +518,200 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isCheckedIn = userHistory.has(dateStr);
-                const flameSVG = `<svg class="w-6 h-6 inline-block flame-icon ${isCheckedIn ? 'active' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.657 7.343A8 8 0 0117.657 18.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1014.12 11.88l-4.242 4.242z"></path></svg>`;
                 const dayEl = document.createElement('div');
-                dayEl.innerHTML = flameSVG;
+                dayEl.innerHTML = `<i data-lucide="flame" class="inline-block flame-icon ${isCheckedIn ? 'active' : ''}"></i>`;
                 calendarEl.appendChild(dayEl);
             }
-         }
-
-        // --- NEW: Journal Logic ---
-        const journalFeedEl = document.getElementById('journal-feed');
-        const journalEntryContentEl = document.getElementById('journal-entry-content');
-        
-        async function getJournalReflection(entryText, reflectionContainer) {
-            reflectionContainer.innerHTML = `<div class="text-sm text-slate-500 animate-pulse">Aura is reflecting...</div>`;
-            const prompt = `You are a reflective listening tool. Do NOT give advice. Read the following journal entry and summarize the core feelings or themes in one or two gentle, affirming sentences. Start with "It sounds like you're feeling..." or "I'm hearing that...". Be concise and empathetic.\n\nJournal Entry:\n"${entryText}"`;
-             try {
-                const payload = { contents: [{ parts: [{ text: prompt }] }] };
-                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) throw new Error('API Error');
-                const result = await response.json();
-                const reflectionText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                reflectionContainer.innerHTML = reflectionText || "Could not generate a reflection at this time.";
-            } catch (error) {
-                reflectionContainer.innerHTML = "Could not generate a reflection at this time.";
-            }
-        }
-        
-        function renderJournalEntry(doc) {
-            const entry = doc.data();
-            const entryEl = document.createElement('div');
-            entryEl.className = 'bg-white p-4 rounded-lg shadow';
-            const entryDate = entry.timestamp.toDate();
-            
-            entryEl.innerHTML = `
-                <p class="text-slate-600 whitespace-pre-wrap">${entry.content}</p>
-                <div class="text-xs text-slate-400 mt-3">${entryDate.toLocaleDateString()} at ${entryDate.toLocaleTimeString()}</div>
-                <div class="mt-4 border-t pt-3">
-                    <button data-entry-id="${doc.id}" class="reflect-btn text-sm text-purple-600 font-semibold hover:text-purple-800">✨ Reflect on This</button>
-                    <div id="reflection-${doc.id}" class="mt-2 text-sm text-purple-800 bg-purple-50 p-3 rounded-md"></div>
-                </div>
-            `;
-            journalFeedEl.prepend(entryEl);
-            const reflectionContainer = entryEl.querySelector(`#reflection-${doc.id}`);
-            reflectionContainer.classList.add('hidden'); // Hide initially
-            
-            entryEl.querySelector('.reflect-btn').addEventListener('click', (e) => {
-                reflectionContainer.classList.remove('hidden');
-                getJournalReflection(entry.content, reflectionContainer);
-                e.target.disabled = true;
-                e.target.textContent = 'Reflection requested';
-            });
+            lucide.createIcons();
         }
 
-        function setupJournal() {
-            const journalCollectionRef = collection(db, "users", currentUser.uid, "journalEntries");
-            const q = query(journalCollectionRef, orderBy("timestamp", "desc"), limit(25));
-            onSnapshot(q, (snapshot) => {
-                journalFeedEl.innerHTML = '';
-                snapshot.forEach(renderJournalEntry);
-            });
-        }
-        
-        document.getElementById('save-journal-entry-btn').addEventListener('click', async () => {
-            const content = journalEntryContentEl.value.trim();
-            if (content && currentUser) {
-                const journalCollectionRef = collection(db, "users", currentUser.uid, "journalEntries");
-                await addDoc(journalCollectionRef, { content, timestamp: serverTimestamp() });
-                journalEntryContentEl.value = '';
-            }
-        });
-
-        // --- Community Logic ---
+        // --- Community & Post Modal Logic ---
         const communityFeedEl = document.getElementById('community-feed');
-        const postContentEl = document.getElementById('post-content');
-        function setupCommunity() { 
+        const postModal = document.getElementById('post-modal');
+        const openPostModalBtn = document.getElementById('open-post-modal-btn');
+        const closePostModalBtn = document.getElementById('close-post-modal-btn');
+        const modalPostContent = document.getElementById('modal-post-content');
+        const modalImageUpload = document.getElementById('modal-image-upload');
+        const modalImagePreview = document.getElementById('modal-image-preview');
+        const templatesContainer = document.getElementById('streak-templates-container');
+        const createPostBtn = document.getElementById('create-post-btn');
+
+        function setupCommunity() {
             const q = query(collection(db, "communityPosts"), orderBy("timestamp", "desc"), limit(25));
             onSnapshot(q, (querySnapshot) => {
                 communityFeedEl.innerHTML = '';
-                querySnapshot.forEach((doc) => {
-                    const post = doc.data();
-                    const postEl = document.createElement('div');
-                    postEl.className = 'bg-white p-4 rounded-lg shadow';
-                    const postDate = post.timestamp ? post.timestamp.toDate().toLocaleDateString() : 'Just now';
-                    postEl.innerHTML = `
-                        <p class="text-slate-800">${post.content}</p>
-                        <div class="flex justify-between items-center mt-3 text-xs text-slate-500">
-                            <span>By: ${post.username}</span>
-                            <span>Streak: 🔥${post.streak} | ${postDate}</span>
-                        </div>
-                    `;
-                    communityFeedEl.appendChild(postEl);
-                });
+                querySnapshot.forEach(renderCommunityPost);
             });
         }
-        document.getElementById('create-post-btn').addEventListener('click', async () => { 
-             const content = postContentEl.value.trim();
-            if (content && currentUser && userData) {
-                await addDoc(collection(db, "communityPosts"), {
-                    userId: currentUser.uid, username: userData.username, content,
-                    streak: userData.streak || 0, timestamp: serverTimestamp()
+        function renderCommunityPost(doc) {
+            const post = doc.data();
+            const postEl = document.createElement('div');
+            postEl.className = 'glass-card p-4 rounded-lg shadow-lg';
+            const postDate = post.timestamp ? post.timestamp.toDate().toLocaleDateString() : 'Just now';
+            const imageUrlHTML = post.imageUrl ? `<img src="${post.imageUrl}" class="mt-3 rounded-lg w-full object-cover max-h-72">` : '';
+            
+            postEl.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <img src="${post.authorPfp || `https://placehold.co/40x40/1f2937/FFF?text=${(post.username || 'Z').charAt(0)}`}" class="w-10 h-10 rounded-full object-cover border-2 border-white/20">
+                    <div>
+                        <p class="font-semibold text-slate-800 dark:text-white">${post.username} <span class="text-xs text-slate-500 dark:text-white/50 font-normal">| Streak: 🔥${post.streak}</span></p>
+                        <p class="text-sm text-slate-700 dark:text-white/80 mt-1">${post.content}</p>
+                        <p class="text-xs text-slate-400 dark:text-white/40 mt-2">${postDate}</p>
+                    </div>
+                </div>
+                ${imageUrlHTML}
+            `;
+            communityFeedEl.appendChild(postEl);
+        }
+
+        openPostModalBtn.addEventListener('click', () => {
+            modalPostContent.value = '';
+            modalImagePreview.src = '';
+            modalImagePreview.classList.add('hidden');
+            
+            // Populate streak templates
+            const streak = userData.streak || 0;
+            templatesContainer.innerHTML = '';
+            if (streak > 0) {
+                const templates = [
+                    `🎉 Just hit my ${streak}-day streak! Feeling proud.`,
+                    `Keeping the 🔥 alive with a ${streak}-day streak!`,
+                    `Consistency is key! Day ${streak} checked in. ✅`
+                ];
+                templates.forEach(text => {
+                    const btn = document.createElement('button');
+                    btn.className = 'text-xs bg-purple-500/20 text-purple-600 dark:text-purple-300 px-2 py-1 rounded-md hover:bg-purple-500/40';
+                    btn.textContent = text;
+                    btn.onclick = () => { modalPostContent.value = text; };
+                    templatesContainer.appendChild(btn);
                 });
-                postContentEl.value = '';
+            } else {
+                templatesContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-white/50">Check-in to unlock streak templates!</p>`;
             }
+
+            postModal.classList.remove('hidden');
+            gsap.fromTo(postModal, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 });
+            lucide.createIcons();
+        });
+        closePostModalBtn.addEventListener('click', () => {
+            gsap.to(postModal, { autoAlpha: 0, duration: 0.3, onComplete: () => postModal.classList.add('hidden') });
         });
         
-        // NEW: Inspire Me Button Logic
-        document.getElementById('inspire-me-btn').addEventListener('click', async (e) => {
-            const btn = e.target;
-            btn.disabled = true;
-            btn.textContent = 'Inspiring...';
-            const prompt = `Generate a short, positive, and encouraging message for a community of young people focused on mental wellness. The message should be about self-care, mindfulness, or a small victory. Keep it under 200 characters.`;
-             try {
-                const payload = { contents: [{ parts: [{ text: prompt }] }] };
-                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) throw new Error('API Error');
-                const result = await response.json();
-                const inspirationalText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                postContentEl.value = inspirationalText.replace(/^"|"$/g, ''); // Remove quotes
-            } catch (error) {
-                postContentEl.value = "Today is a good day to be kind to yourself.";
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '✨ Inspire Me';
+        modalImageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                modalImagePreview.src = event.target.result;
+                modalImagePreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        createPostBtn.addEventListener('click', async () => { 
+            const content = modalPostContent.value.trim();
+            const imageUrl = modalImagePreview.src.startsWith('data:image') ? modalImagePreview.src : '';
+
+            if ((content || imageUrl) && currentUser && userData) {
+                await addDoc(collection(db, "communityPosts"), {
+                    userId: currentUser.uid, username: userData.username, 
+                    authorPfp: userData.profilePicUrl || '', content, imageUrl,
+                    streak: userData.streak || 0, timestamp: serverTimestamp()
+                });
+                closePostModalBtn.click();
             }
         });
 
+        // --- Guided Breathing Logic ---
+        const breatheCircle = document.querySelector('.breathing-circle');
+        const breatheText = document.getElementById('breathe-text');
+        const breatheTimerEl = document.getElementById('breathe-timer');
+        const startBreatheBtn = document.getElementById('start-breathe-btn');
+        const stopBreatheBtn = document.getElementById('stop-breathe-btn');
+        let breatheInterval;
+        let breatheCycleTimeout;
+        
+        startBreatheBtn.addEventListener('click', () => {
+            breatheCircle.classList.add('breathing');
+            startBreatheBtn.classList.add('hidden');
+            stopBreatheBtn.classList.remove('hidden');
+            runBreatheCycle();
+            let timeLeft = 120;
+            breatheTimerEl.textContent = "2:00 remaining";
+            breatheInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                breatheTimerEl.textContent = `${minutes}:${String(seconds).padStart(2, '0')} remaining`;
+                if (timeLeft <= 0) stopBreathing();
+            }, 1000);
+        });
+        function runBreatheCycle() {
+            const instructions = [ { text: "Breathe in...", duration: 4000 }, { text: "Hold", duration: 2000 }, { text: "Breathe out...", duration: 4000 } ];
+            let i = 0;
+            function nextInstruction() {
+                breatheText.textContent = instructions[i].text;
+                breatheCycleTimeout = setTimeout(nextInstruction, instructions[i].duration);
+                i = (i + 1) % instructions.length;
+            }
+            nextInstruction();
+        }
+        function stopBreathing(isReset = false) {
+            breatheCircle.classList.remove('breathing');
+            startBreatheBtn.classList.remove('hidden');
+            stopBreatheBtn.classList.add('hidden');
+            clearInterval(breatheInterval);
+            clearTimeout(breatheCycleTimeout);
+            breatheText.textContent = isReset ? "Ready?" : "Great job!";
+            breatheTimerEl.textContent = isReset ? "2-Minute Session" : "Session Complete";
+        }
+        stopBreatheBtn.addEventListener('click', () => stopBreathing(false));
+
+        // --- Profile Page Logic ---
+        const profilePicPreview = document.getElementById('profile-pic-preview');
+        const pfpUpload = document.getElementById('pfp-upload');
+        const profileUsername = document.getElementById('profile-username');
+        const profileBio = document.getElementById('profile-bio');
+
+        function setupProfile() {
+            profileUsername.value = userData.username || '';
+            profileBio.value = userData.bio || '';
+            profilePicPreview.src = userData.profilePicUrl || `https://placehold.co/150x150/1f2937/FFF?text=${(userData.username || 'Z').charAt(0)}`;
+        }
+
+        pfpUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => { profilePicPreview.src = event.target.result; };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('save-profile-btn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            const newUsername = profileUsername.value.trim();
+            const newBio = profileBio.value.trim();
+            const newPfp = profilePicPreview.src;
+
+            const userDocRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userDocRef, { username: newUsername, bio: newBio, profilePicUrl: newPfp });
+
+            userData.username = newUsername;
+            userData.bio = newBio;
+            userData.profilePicUrl = newPfp;
+            document.getElementById('welcome-user').textContent = `Hi, ${newUsername}!`;
+            document.getElementById('header-pfp').src = newPfp;
+
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success', title: 'Profile updated!',
+                showConfirmButton: false, timer: 2000,
+                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff', 
+                color: htmlEl.classList.contains('dark') ? '#ffffff' : '#000000'
+            });
+        });
 
     </script>
 </body>
 </html>
+
 

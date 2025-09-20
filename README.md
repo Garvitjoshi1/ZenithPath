@@ -36,22 +36,22 @@ Our goal is to make **mental wellness accessible and normal** in everyday life.
 ![Light Mode](screenshots/light-mode.png)  
 
 ### Dark Mode  
-![Dark Mode](screenshots/dark-mode.png)  
+![Dark Mode](screenshots/dark-mode.png) 
 
-### Login Page  
-![Login](screenshots/login.png)  
+### AI Chatbot  
+![Chatbot](screenshots/chatbot.png)  
 
 ### Streaks & Calendar  
-![Streaks](screenshots/streaks.png)  
+![Streaks](screenshots/streaks.png) 
+
+### Breathe Page  
+![Login](screenshots/breathe.png)  
 
 ### Community Feed  
 ![Community](screenshots/community.png)  
 
 ### Friends System  
 ![Friends](screenshots/friends.png)  
-
-### AI Chatbot  
-![Chatbot](screenshots/chatbot.png)  
 
 ### Profile Page  
 ![Profile](screenshots/profile.png)  

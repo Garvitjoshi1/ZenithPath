@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraAI - Your Mental Wellness Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- NEW: Library for confetti effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hidden { display: none !important; }
+
+        /* NEW: Aurora Background Effect */
+        .aurora-bg {
+            background-color: #a6c1ee;
+            background-image:
+                radial-gradient(at 20% 15%, hsla(212,80%,55%,0.3) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, hsla(289,80%,55%,0.3) 0px, transparent 50%),
+                radial-gradient(at 15% 80%, hsla(180,80%,60%,0.3) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, hsla(30,80%,55%,0.3) 0px, transparent 50%);
+            animation: aurora-animation 20s infinite linear;
+        }
+
+        @keyframes aurora-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* NEW: Glassmorphism Effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-container::-webkit-scrollbar, .journal-feed::-webkit-scrollbar { width: 8px; }
+        .chat-container::-webkit-scrollbar-track, .journal-feed::-webkit-scrollbar-track { background: #f1f5f9; }
+        .chat-container::-webkit-scrollbar-thumb, .journal-feed::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        .chat-container::-webkit-scrollbar-thumb:hover, .journal-feed::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        /* NEW: Streak Calendar Flame animation */
+        .flame-icon { transition: all 0.3s ease; }
+        .flame-icon.active { color: #f97316; transform: scale(1.2); text-shadow: 0 0 10px #f97316; }
+
+    </style>
+</head>
+<body class="bg-slate-50 antialiased">
+
+    <div id="app-container" class="w-full h-screen bg-white flex flex-col">
+
+        <!-- ==================================================== -->
+        <!-- ============== AUTHENTICATION PAGE ================= -->
+        <!-- ==================================================== -->
+        <div id="auth-page" class="flex flex-col items-center justify-center h-full p-6 aurora-bg">
+            <div class="text-center mb-10">
+                <h1 class="text-5xl font-extrabold text-white" style="text-shadow: 0 2px 10px rgba(0,0,0,0.2);">AuraAI</h1>
+                <p class="text-white/80 mt-2">Find your calm in the chaos.</p>
+            </div>
+            <!-- NEW: Glass effect container for the form -->
+            <div class="w-full max-w-sm p-8 rounded-2xl glass-effect space-y-4">
+                <div id="auth-error" class="hidden p-3 bg-red-500/50 text-white rounded-lg text-sm"></div>
+                <!-- Login Form -->
+                <div id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" class="w-full px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
+                    <input type="password" id="login-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
+                    <button id="login-btn" class="w-full mt-6 bg-white text-blue-600 font-bold py-3 rounded-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105">Login</button>
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-white/30"></span></div>
+                        <div class="relative flex justify-center text-xs uppercase"><span class="bg-transparent px-2 text-white/70" style="backdrop-filter: blur(12px);">Or continue with</span></div>
+                    </div>
+                    <button id="google-login-btn" class="w-full bg-white text-slate-700 font-medium py-3 rounded-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                        Sign in with Google
+                    </button>
+                    <p class="text-center text-sm text-white/80 mt-6">Don't have an account? <a href="#" id="show-signup" class="font-bold text-white hover:underline">Sign Up</a></p>
+                </div>
+                <!-- Signup Form -->
+                <div id="signup-form" class="hidden">
+                    <input type="text" id="signup-username" placeholder="Username" class="w-full px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
+                    <input type="email" id="signup-email" placeholder="Email" class="w-full mt-3 px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
+                    <input type="password" id="signup-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-white/20 text-white placeholder-white/70 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50">
+                    <button id="signup-btn" class="w-full mt-6 bg-white text-blue-600 font-bold py-3 rounded-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105">Create Account</button>
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-white/30"></span></div>
+                        <div class="relative flex justify-center text-xs uppercase"><span class="bg-transparent px-2 text-white/70" style="backdrop-filter: blur(12px);">Or sign up with</span></div>
+                    </div>
+                     <button id="google-signup-btn" class="w-full bg-white text-slate-700 font-medium py-3 rounded-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                        Sign up with Google
+                    </button>
+                    <p class="text-center text-sm text-white/80 mt-6">Already have an account? <a href="#" id="show-login" class="font-bold text-white hover:underline">Login</a></p>
+                </div>
+            </div>
+            <div id="auth-loading" class="hidden mt-4">
+                <p class="text-white/80">Loading...</p>
+            </div>
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- ================= MAIN APP PAGE ==================== -->
+        <!-- ==================================================== -->
+        <div id="main-app-page" class="hidden flex-col h-full bg-slate-50">
+             <header class="bg-white p-4 flex justify-between items-center border-b sticky top-0 z-10">
+                <h1 class="text-xl font-bold text-blue-600">AuraAI</h1>
+                <div>
+                    <span id="welcome-user" class="text-slate-600 mr-4 text-sm font-medium"></span>
+                    <button id="logout-btn" class="text-sm text-slate-500 hover:text-blue-600">Logout</button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto">
+                <!-- ============ CHATBOT CONTENT =========== -->
+                <div id="chat-page" class="flex flex-col h-full">
+                     <main id="chat-container" class="flex-1 p-6 overflow-y-auto chat-container">
+                        <div class="flex justify-start mb-4">
+                            <div class="bg-blue-100 text-slate-800 p-3 rounded-lg max-w-md shadow"><p class="text-sm">Hello! I'm AuraAI. How are you feeling today?</p></div>
+                        </div>
+                    </main>
+                    <div id="loading-indicator" class="px-6 pb-2 hidden">
+                        <div class="flex items-center justify-start"><div class="bg-slate-200 p-3 rounded-lg shadow animate-pulse"><div class="flex items-center space-x-2"><div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div><div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div></div></div></div>
+                    </div>
+                    <footer class="p-4 bg-white/80 backdrop-blur-sm border-t sticky bottom-0">
+                        <div class="flex items-center">
+                            <input type="text" id="user-input" placeholder="Type your message..." class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="send-btn" class="ml-3 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-transform duration-200 hover:scale-110">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            </button>
+                        </div>
+                    </footer>
+                </div>
+
+                <!-- ============ STREAKS CONTENT =========== -->
+                <div id="streaks-page" class="hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Your Wellness Streak</h2>
+                        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-xl text-center shadow-lg text-white relative overflow-hidden">
+                            <p class="text-lg opacity-80">Current Streak</p>
+                            <p id="streak-count" class="text-7xl font-extrabold my-2">0</p>
+                            <p class="opacity-80">days of checking in!</p>
+                            <button id="checkin-btn" class="mt-6 bg-white text-blue-600 font-bold px-8 py-3 rounded-full hover:bg-white/90 transition transform hover:scale-105">Check-in for Today</button>
+                        </div>
+
+                        <div id="quote-container" class="hidden mt-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
+                            <p class="font-bold">Way to go!</p>
+                            <p id="quote-text" class="text-sm"></p>
+                        </div>
+
+                         <div class="mt-8">
+                            <h3 class="text-xl font-bold text-slate-700 mb-3">This Month's Progress</h3>
+                            <div id="streak-calendar" class="grid grid-cols-7 gap-y-3 text-center text-lg text-slate-400">
+                               <!-- Calendar will be generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========== NEW: JOURNAL CONTENT =========== -->
+                <div id="journal-page" class="hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto flex flex-col flex-1 h-full">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Private Journal</h2>
+                        <div class="bg-white p-4 rounded-lg shadow-md">
+                            <textarea id="journal-entry-content" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="6" placeholder="Write about your thoughts and feelings..."></textarea>
+                            <button id="save-journal-entry-btn" class="mt-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Save Entry</button>
+                        </div>
+                        <div id="journal-feed" class="mt-6 space-y-4 flex-1 overflow-y-auto journal-feed pr-2">
+                            <!-- Journal entries will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========== COMMUNITY CONTENT =========== -->
+                <div id="community-page" class="hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Community Wall</h2>
+                        <div class="bg-white p-4 rounded-lg shadow-md">
+                            <textarea id="post-content" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Share a positive thought or your progress..."></textarea>
+                            <div class="flex justify-between items-center mt-2">
+                                <button id="inspire-me-btn" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition text-sm">✨ Inspire Me</button>
+                                <button id="create-post-btn" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Post to Wall</button>
+                            </div>
+                        </div>
+                        <div id="community-feed" class="mt-6 space-y-4">
+                            <!-- Posts will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- NEW: Navigation with Icons -->
+            <nav class="flex justify-around bg-white/70 backdrop-blur-sm p-2 border-t sticky bottom-0 z-10">
+                <button data-page="chat-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 hover:bg-blue-100 hover:text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <span class="text-xs mt-1">Chat</span>
+                </button>
+                <button data-page="streaks-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 hover:bg-blue-100 hover:text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.657 7.343A8 8 0 0117.657 18.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1014.12 11.88l-4.242 4.242z"></path></svg>
+                    <span class="text-xs mt-1">Streaks</span>
+                </button>
+                <!-- NEW: Journal Nav Button -->
+                <button data-page="journal-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 hover:bg-blue-100 hover:text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-5.247-8.995l-1.506 1.506a5.002 5.002 0 000 7.072l.15 .15a5.002 5.002 0 007.072 0l1.506-1.506M9 19.5l-2-2m5.247-8.995l1.506-1.506a5.002 5.002 0 010-7.072l-.15-.15a5.002 5.002 0 01-7.072 0L5.005 9.505"></path></svg>
+                    <span class="text-xs mt-1">Journal</span>
+                </button>
+                <button data-page="community-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 hover:bg-blue-100 hover:text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span class="text-xs mt-1">Community</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // --- UPDATED: Your Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDViVrJ9agi89g7cG51SVP9ECHDk5YNGoM",
+            authDomain: "auraai-472617.firebaseapp.com",
+            projectId: "auraai-472617",
+            storageBucket: "auraai-472617.appspot.com", // Corrected to standard .appspot.com format
+            messagingSenderId: "1077227113610",
+            appId: "1:10772210:web:846934fd5147f430a07173",
+            measurementId: "G-PY62KH8QGE"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider(); 
+        let currentUser = null;
+        let userData = null;
+
+        const authPage = document.getElementById('auth-page');
+        const mainAppPage = document.getElementById('main-app-page');
+        // ... (rest of the element selectors are the same)
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists()) {
+                    userData = userDocSnap.data();
+                    document.getElementById('welcome-user').textContent = `Hi, ${userData.username}!`;
+                    setupAppForUser();
+                } else { // Handle case where Google user signs in for first time after auth is added
+                     await setDoc(doc(db, "users", user.uid), {
+                        username: user.displayName || 'Aura User',
+                        email: user.email,
+                        streak: 0,
+                        lastCheckIn: null,
+                        checkInHistory: []
+                    });
+                     const newUserDocSnap = await getDoc(userDocRef);
+                     userData = newUserDocSnap.data();
+                     document.getElementById('welcome-user').textContent = `Hi, ${userData.username}!`;
+                     setupAppForUser();
+                }
+                authPage.classList.add('hidden');
+                mainAppPage.classList.remove('hidden');
+                mainAppPage.classList.add('flex');
+            } else {
+                currentUser = null; userData = null;
+                authPage.classList.remove('hidden');
+                mainAppPage.classList.add('hidden');
+                mainAppPage.classList.remove('flex');
+            }
+        });
+        
+        // --- Auth UI Logic (same as before) ---
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.add('hidden'); signupForm.classList.remove('hidden'); });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); signupForm.classList.add('hidden'); loginForm.classList.remove('hidden'); });
+        const authError = document.getElementById('auth-error');
+        const showAuthError = (message) => { authError.textContent = message; authError.classList.remove('hidden'); };
+        document.getElementById('signup-btn').addEventListener('click', async () => { 
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            if (!username || !email || !password) { showAuthError("Please fill in all fields."); return; }
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await setDoc(doc(db, "users", userCredential.user.uid), { username, email, streak: 0, lastCheckIn: null, checkInHistory: [] });
+            } catch (error) { showAuthError(error.message); }
+        });
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            if (!email || !password) { showAuthError("Please fill in all fields."); return; }
+            try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { showAuthError(error.message); }
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+        const handleGoogleSignIn = async () => {
+            authError.classList.add('hidden');
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+            } catch (error) {
+                showAuthError(error.message);
+            }
+        };
+
+        document.getElementById('google-login-btn').addEventListener('click', handleGoogleSignIn);
+        document.getElementById('google-signup-btn').addEventListener('click', handleGoogleSignIn);
+
+
+        function setupAppForUser() {
+            showPage('chat-page');
+            setupStreaks();
+            setupCommunity();
+            setupJournal(); // NEW: Setup journal on login
+        }
+        
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const contentPages = document.querySelectorAll('#main-app-page main > div');
+        function showPage(pageId) {
+            contentPages.forEach(page => page.classList.add('hidden'));
+            const targetPage = document.getElementById(pageId);
+            targetPage.classList.remove('hidden');
+            if (pageId === 'chat-page' || pageId === 'journal-page') { 
+                targetPage.classList.add('flex', 'flex-col', 'h-full'); 
+            }
+            navButtons.forEach(btn => {
+                if (btn.dataset.page === pageId) {
+                    btn.classList.add('bg-blue-100', 'text-blue-700');
+                    btn.classList.remove('text-slate-600');
+                } else {
+                    btn.classList.remove('bg-blue-100', 'text-blue-700');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+        }
+        navButtons.forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
+
+        const API_KEY = "AIzaSyB-FsGJMQy68G8bB2caJ1LwS4thyLT7KUQ";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+        
+        // --- Chatbot Logic ---
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatContainer = document.getElementById('chat-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        
+        // ENHANCED: More detailed system prompt for safety and clarity
+        const CHATBOT_SYSTEM_PROMPT = `You are AuraAI, a supportive and empathetic companion for young adults in India. Your personality is warm, kind, non-judgmental, and understanding.
+        RULES:
+        1.  **You are NOT a therapist or a medical professional.** You cannot provide diagnosis, treatment, or medical advice.
+        2.  Your primary role is to be an active listener, provide a safe space to talk, and offer general, positive encouragement. Use phrases like "It sounds like that's really tough," or "Thank you for sharing that with me."
+        3.  If a user expresses thoughts of self-harm, crisis, or severe distress, you MUST IMMEDIATELY and gently guide them to professional help. Respond with: "It sounds like you are going through a lot right now, and it's really brave of you to talk about it. For immediate support, it's best to connect with a professional who can help. Please consider reaching out to a helpline like iCALL (9152987821) or Aasra (9820466726). They are there to listen." Do not engage further on the topic.
+        4.  Keep responses concise and easy to read on a mobile screen. Use formatting like bolding for emphasis where appropriate.
+        5.  Be culturally sensitive to the context of Indian youth.`;
+        
+        async function getAuraResponse(message) { 
+            loadingIndicator.classList.remove('hidden');
+            try {
+                const payload = { systemInstruction: { parts: [{ text: CHATBOT_SYSTEM_PROMPT }] }, contents: [{ parts: [{ text: message }] }] };
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                const result = await response.json();
+                const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                addMessageToChat(aiText || "I'm having trouble thinking right now.", 'ai');
+            } catch (error) { addMessageToChat("Oops! Something went wrong on my end.", 'ai'); console.error(error);
+            } finally { loadingIndicator.classList.add('hidden'); }
+        }
+        function addMessageToChat(message, sender) { 
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex mb-4 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            msgDiv.innerHTML = `<div class="p-3 rounded-lg max-w-md shadow ${sender === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-800'}"><p class="text-sm">${message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p></div>`;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        function handleSend() { const message = userInput.value.trim(); if (message) { addMessageToChat(message, 'user'); userInput.value = ''; getAuraResponse(message); } }
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+
+        // --- Streaks Logic with Gamification (same as before) ---
+        const streakCountEl = document.getElementById('streak-count');
+        const checkinBtn = document.getElementById('checkin-btn');
+        const calendarEl = document.getElementById('streak-calendar');
+        const quoteContainer = document.getElementById('quote-container');
+        const quoteTextEl = document.getElementById('quote-text');
+        const motivationalQuotes = ["Believe you can and you're halfway there.", "The secret of getting ahead is getting started.", "It does not matter how slowly you go as long as you do not stop.", "The only way to do great work is to love what you do.", "Your limitation—it's only your imagination."];
+        function isSameDay(date1, date2) { return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate(); }
+        function setupStreaks() {
+            streakCountEl.textContent = userData.streak || 0;
+            const today = new Date();
+            const lastCheckInDate = userData.lastCheckIn ? userData.lastCheckIn.toDate() : null;
+            if (lastCheckInDate && isSameDay(today, lastCheckInDate)) {
+                checkinBtn.disabled = true;
+                checkinBtn.textContent = "Checked-in Today!";
+                checkinBtn.classList.remove('bg-white', 'text-blue-600');
+                checkinBtn.classList.add('bg-green-500', 'text-white', 'cursor-not-allowed');
+            } else {
+                 checkinBtn.disabled = false;
+                 checkinBtn.textContent = "Check-in for Today";
+                 checkinBtn.classList.add('bg-white', 'text-blue-600');
+                 checkinBtn.classList.remove('bg-green-500', 'text-white', 'cursor-not-allowed');
+            }
+            renderCalendar();
+        }
+        checkinBtn.addEventListener('click', async () => {
+            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+            let newStreak = 1;
+            const lastCheckInDate = userData.lastCheckIn ? userData.lastCheckIn.toDate() : null;
+            if(lastCheckInDate && isSameDay(yesterday, lastCheckInDate)) { newStreak = userData.streak + 1; }
+            else if (lastCheckInDate && isSameDay(today, lastCheckInDate)) { return; }
+            const userDocRef = doc(db, "users", currentUser.uid);
+            const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
+            const newHistory = [...(new Set(userData.checkInHistory || [])), todayStr];
+            await setDoc(userDocRef, { streak: newStreak, lastCheckIn: serverTimestamp(), checkInHistory: newHistory }, { merge: true });
+            
+            userData.streak = newStreak;
+            userData.lastCheckIn = { toDate: () => new Date() };
+            userData.checkInHistory = newHistory;
+            streakCountEl.textContent = newStreak;
+            quoteTextEl.textContent = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+            quoteContainer.classList.remove('hidden');
+            setupStreaks();
+        });
+        function renderCalendar() { /* ... same as before ... */
+             calendarEl.innerHTML = '';
+            const today = new Date();
+            const month = today.getMonth();
+            const year = today.getFullYear();
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayNames.forEach(day => calendarEl.innerHTML += `<div class='font-bold text-slate-500 text-xs'>${day}</div>`);
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            for(let i=0; i < firstDayOfMonth; i++) { calendarEl.appendChild(document.createElement('div')); }
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const userHistory = new Set(userData.checkInHistory || []);
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isCheckedIn = userHistory.has(dateStr);
+                const flameSVG = `<svg class="w-6 h-6 inline-block flame-icon ${isCheckedIn ? 'active' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.657 7.343A8 8 0 0117.657 18.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1014.12 11.88l-4.242 4.242z"></path></svg>`;
+                const dayEl = document.createElement('div');
+                dayEl.innerHTML = flameSVG;
+                calendarEl.appendChild(dayEl);
+            }
+         }
+
+        // --- NEW: Journal Logic ---
+        const journalFeedEl = document.getElementById('journal-feed');
+        const journalEntryContentEl = document.getElementById('journal-entry-content');
+        
+        async function getJournalReflection(entryText, reflectionContainer) {
+            reflectionContainer.innerHTML = `<div class="text-sm text-slate-500 animate-pulse">Aura is reflecting...</div>`;
+            const prompt = `You are a reflective listening tool. Do NOT give advice. Read the following journal entry and summarize the core feelings or themes in one or two gentle, affirming sentences. Start with "It sounds like you're feeling..." or "I'm hearing that...". Be concise and empathetic.\n\nJournal Entry:\n"${entryText}"`;
+             try {
+                const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error('API Error');
+                const result = await response.json();
+                const reflectionText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                reflectionContainer.innerHTML = reflectionText || "Could not generate a reflection at this time.";
+            } catch (error) {
+                reflectionContainer.innerHTML = "Could not generate a reflection at this time.";
+            }
+        }
+        
+        function renderJournalEntry(doc) {
+            const entry = doc.data();
+            const entryEl = document.createElement('div');
+            entryEl.className = 'bg-white p-4 rounded-lg shadow';
+            const entryDate = entry.timestamp.toDate();
+            
+            entryEl.innerHTML = `
+                <p class="text-slate-600 whitespace-pre-wrap">${entry.content}</p>
+                <div class="text-xs text-slate-400 mt-3">${entryDate.toLocaleDateString()} at ${entryDate.toLocaleTimeString()}</div>
+                <div class="mt-4 border-t pt-3">
+                    <button data-entry-id="${doc.id}" class="reflect-btn text-sm text-purple-600 font-semibold hover:text-purple-800">✨ Reflect on This</button>
+                    <div id="reflection-${doc.id}" class="mt-2 text-sm text-purple-800 bg-purple-50 p-3 rounded-md"></div>
+                </div>
+            `;
+            journalFeedEl.prepend(entryEl);
+            const reflectionContainer = entryEl.querySelector(`#reflection-${doc.id}`);
+            reflectionContainer.classList.add('hidden'); // Hide initially
+            
+            entryEl.querySelector('.reflect-btn').addEventListener('click', (e) => {
+                reflectionContainer.classList.remove('hidden');
+                getJournalReflection(entry.content, reflectionContainer);
+                e.target.disabled = true;
+                e.target.textContent = 'Reflection requested';
+            });
+        }
+
+        function setupJournal() {
+            const journalCollectionRef = collection(db, "users", currentUser.uid, "journalEntries");
+            const q = query(journalCollectionRef, orderBy("timestamp", "desc"), limit(25));
+            onSnapshot(q, (snapshot) => {
+                journalFeedEl.innerHTML = '';
+                snapshot.forEach(renderJournalEntry);
+            });
+        }
+        
+        document.getElementById('save-journal-entry-btn').addEventListener('click', async () => {
+            const content = journalEntryContentEl.value.trim();
+            if (content && currentUser) {
+                const journalCollectionRef = collection(db, "users", currentUser.uid, "journalEntries");
+                await addDoc(journalCollectionRef, { content, timestamp: serverTimestamp() });
+                journalEntryContentEl.value = '';
+            }
+        });
+
+        // --- Community Logic ---
+        const communityFeedEl = document.getElementById('community-feed');
+        const postContentEl = document.getElementById('post-content');
+        function setupCommunity() { 
+            const q = query(collection(db, "communityPosts"), orderBy("timestamp", "desc"), limit(25));
+            onSnapshot(q, (querySnapshot) => {
+                communityFeedEl.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const post = doc.data();
+                    const postEl = document.createElement('div');
+                    postEl.className = 'bg-white p-4 rounded-lg shadow';
+                    const postDate = post.timestamp ? post.timestamp.toDate().toLocaleDateString() : 'Just now';
+                    postEl.innerHTML = `
+                        <p class="text-slate-800">${post.content}</p>
+                        <div class="flex justify-between items-center mt-3 text-xs text-slate-500">
+                            <span>By: ${post.username}</span>
+                            <span>Streak: 🔥${post.streak} | ${postDate}</span>
+                        </div>
+                    `;
+                    communityFeedEl.appendChild(postEl);
+                });
+            });
+        }
+        document.getElementById('create-post-btn').addEventListener('click', async () => { 
+             const content = postContentEl.value.trim();
+            if (content && currentUser && userData) {
+                await addDoc(collection(db, "communityPosts"), {
+                    userId: currentUser.uid, username: userData.username, content,
+                    streak: userData.streak || 0, timestamp: serverTimestamp()
+                });
+                postContentEl.value = '';
+            }
+        });
+        
+        // NEW: Inspire Me Button Logic
+        document.getElementById('inspire-me-btn').addEventListener('click', async (e) => {
+            const btn = e.target;
+            btn.disabled = true;
+            btn.textContent = 'Inspiring...';
+            const prompt = `Generate a short, positive, and encouraging message for a community of young people focused on mental wellness. The message should be about self-care, mindfulness, or a small victory. Keep it under 200 characters.`;
+             try {
+                const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error('API Error');
+                const result = await response.json();
+                const inspirationalText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                postContentEl.value = inspirationalText.replace(/^"|"$/g, ''); // Remove quotes
+            } catch (error) {
+                postContentEl.value = "Today is a good day to be kind to yourself.";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✨ Inspire Me';
+            }
+        });
+
+
+    </script>
+</body>
+</html>
+

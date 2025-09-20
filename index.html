@@ -27,17 +27,25 @@
         body { font-family: 'Inter', sans-serif; }
         .hidden { display: none !important; }
 
+        /* FIXED: Aurora background now works for light and dark mode */
         .aurora-bg {
-            background-color: #f9fafb; /* Light mode base */
+            /* Light mode aurora */
+            background-color: #f9fafb;
+             background-image:
+                radial-gradient(at 20% 15%, hsla(212,80%,80%,0.3) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, hsla(289,80%,80%,0.2) 0px, transparent 50%),
+                radial-gradient(at 15% 80%, hsla(180,80%,85%,0.3) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, hsla(30,80%,80%,0.2) 0px, transparent 50%);
+            animation: aurora-animation 20s infinite linear;
         }
         .dark .aurora-bg {
-            background-color: #111827; /* Dark base */
+            /* Dark mode aurora */
+            background-color: #111827;
             background-image:
                 radial-gradient(at 20% 15%, hsla(212,80%,55%,0.2) 0px, transparent 50%),
                 radial-gradient(at 80% 20%, hsla(289,80%,55%,0.2) 0px, transparent 50%),
                 radial-gradient(at 15% 80%, hsla(180,80%,60%,0.2) 0px, transparent 50%),
                 radial-gradient(at 85% 85%, hsla(30,80%,55%,0.15) 0px, transparent 50%);
-            animation: aurora-animation 20s infinite linear;
         }
 
         @keyframes aurora-animation { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
@@ -78,6 +86,36 @@
             0%   { transform: scale(1); } 40%  { transform: scale(1.5); }
             60%  { transform: scale(1.5); } 100% { transform: scale(1); }
         }
+
+        /* NEW: Styles for the theme toggle switch */
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background-color: #e5e7eb; /* gray-200 */
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .dark .toggle-switch {
+            background-color: #374151; /* gray-700 */
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .toggle-thumb {
+            width: 22px;
+            height: 22px;
+            background-color: white;
+            border-radius: 9999px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .dark .toggle-switch .toggle-thumb {
+            transform: translateX(22px);
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-white/90 antialiased">
@@ -85,12 +123,12 @@
     <div id="app-container" class="w-full h-screen flex flex-col">
 
         <!-- AUTHENTICATION PAGE -->
-        <div id="auth-page" class="flex flex-col items-center justify-center h-full p-6 bg-white dark:aurora-bg">
+        <div id="auth-page" class="flex flex-col items-center justify-center h-full p-6 aurora-bg">
              <div class="absolute top-6 right-6">
-                <button id="auth-theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800/50 text-slate-700 dark:text-white/70">
-                    <i data-lucide="sun" class="hidden dark:block"></i>
-                    <i data-lucide="moon" class="dark:hidden"></i>
-                </button>
+                <!-- NEW: Replaced button with switch-style toggle -->
+                <div id="auth-theme-toggle" class="toggle-switch">
+                    <div class="toggle-thumb"></div>
+                </div>
             </div>
             <div class="text-center mb-10">
                 <h1 class="text-5xl font-extrabold text-slate-800 dark:text-white" style="text-shadow: 0 2px 10px rgba(0,0,0,0.1);">Zenith Path</h1>
@@ -103,18 +141,18 @@
                     <input type="email" id="login-email" placeholder="Email" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                     <input type="password" id="login-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                     <button id="login-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Login</button>
-                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-gray-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or continue with</span></div></div>
-                    <button id="google-login-btn" class="w-full bg-white/90 text-slate-800 font-medium py-3 rounded-lg hover:bg-white transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300 dark:border-transparent"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign in with Google</button>
-                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Don't have an account? <a href="#" id="show-signup" class="font-bold text-indigo-500 dark:text-white hover:underline">Sign Up</a></p>
+                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-slate-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or continue with</span></div></div>
+                    <button id="google-login-btn" class="w-full bg-white text-slate-800 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign in with Google</button>
+                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Don't have an account? <a href="#" id="show-signup" class="font-bold text-indigo-500 dark:text-indigo-400 hover:underline">Sign Up</a></p>
                 </div>
                 <div id="signup-form" class="hidden">
                     <input type="text" id="signup-username" placeholder="Username" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                     <input type="email" id="signup-email" placeholder="Email" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                     <input type="password" id="signup-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                     <button id="signup-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Create Account</button>
-                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-gray-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or sign up with</span></div></div>
-                    <button id="google-signup-btn" class="w-full bg-white/90 text-slate-800 font-medium py-3 rounded-lg hover:bg-white transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300 dark:border-transparent"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign up with Google</button>
-                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Already have an account? <a href="#" id="show-login" class="font-bold text-indigo-500 dark:text-white hover:underline">Login</a></p>
+                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-slate-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or sign up with</span></div></div>
+                    <button id="google-signup-btn" class="w-full bg-white text-slate-800 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign up with Google</button>
+                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Already have an account? <a href="#" id="show-login" class="font-bold text-indigo-500 dark:text-indigo-400 hover:underline">Login</a></p>
                 </div>
             </div>
         </div>
@@ -125,10 +163,10 @@
                 <h1 class="text-xl font-bold text-slate-800 dark:text-white">Zenith Path</h1>
                 <div class="flex items-center space-x-4">
                     <span id="welcome-user" class="text-slate-700 dark:text-white/80 text-sm font-medium hidden sm:block"></span>
-                    <button id="theme-toggle" class="p-2 rounded-full text-slate-700 dark:text-white/70">
-                        <i data-lucide="sun" class="hidden dark:block"></i>
-                        <i data-lucide="moon" class="dark:hidden"></i>
-                    </button>
+                    <!-- NEW: Replaced button with switch-style toggle -->
+                    <div id="theme-toggle" class="toggle-switch">
+                        <div class="toggle-thumb"></div>
+                    </div>
                     <img id="header-pfp" src="https://placehold.co/40x40/1f2937/FFF?text=ZP" class="w-8 h-8 rounded-full object-cover border-2 border-white/20 cursor-pointer" title="Go to Profile">
                     <button id="logout-btn" title="Logout"><i data-lucide="log-out" class="w-5 h-5 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white"></i></button>
                 </div>
@@ -266,7 +304,6 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // IMPORTANT: Add your Firebase project's configuration object here
         const firebaseConfig = {
             apiKey: "AIzaSyDViVrJ9agi89g7cG51SVP9ECHDk5YNGoM",
             authDomain: "auraai-472617.firebaseapp.com",
@@ -713,5 +750,4 @@
     </script>
 </body>
 </html>
-
 

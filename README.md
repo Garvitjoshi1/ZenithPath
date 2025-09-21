@@ -3,6 +3,15 @@ Find your calm, reach your peak.
 
 ---
 
+## 📛 Badges  
+
+![Netlify Status](https://api.netlify.com/api/v1/badges/ca185c1d-bfd5-4e9b-9c38-ad9459565b29/deploy-status)  
+![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore-FFCA28?logo=firebase&logoColor=white)  
+![Gemini API](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=google&logoColor=white)  
+![TailwindCSS](https://img.shields.io/badge/Styled%20with-TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white)  
+![GSAP](https://img.shields.io/badge/Animations-GSAP-88CE02?logo=greensock&logoColor=white)  
+![License](https://img.shields.io/badge/License-MIT-green)  
+
 ## 🚀 Live Demo  
 Experience Zenith Path live: [Zenith Path](https://zenithpath.netlify.app/)  
 

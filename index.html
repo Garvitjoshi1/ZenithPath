@@ -415,9 +415,8 @@
         navButtons.forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
 
         // --- Gemini API Setup ---
-        const API_KEY = "AIzaSyB-FsGJMQy68G8bB2caJ1LwS4thyLT7KUQ";
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
-        
+        const API_URL = `/.netlify/functions/chat`;
+
         // --- Chatbot Logic ---
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
@@ -427,9 +426,14 @@
         
         async function getAuraResponse(message) {
             loadingIndicator.classList.remove('hidden');
-             try {
-                const payload = { systemInstruction: { parts: [{ text: CHATBOT_SYSTEM_PROMPT }] }, contents: [{ parts: [{ text: message }] }] };
-                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            try {
+        // UPDATED: The payload now includes the system prompt to send to our function
+        const payload = { message: message, systemPrompt: CHATBOT_SYSTEM_PROMPT };
+        const response = await fetch(API_URL, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(payload) 
+        });
                 if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
                 const result = await response.json();
                 const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;

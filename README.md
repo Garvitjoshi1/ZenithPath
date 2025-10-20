@@ -141,28 +141,3 @@ For more, see: [Netlify docs: Environment variables](https://docs.netlify.com/en
 ### Clone the repo  
 ```bash
 git clone https://github.com/Garvitjoshi1/ZenithAI.git
-cd ZenithAI/public
----
-
-## Mental-wellness-only enforcement (serverless chat)
-
-This project includes a serverless chat function at `netlify/functions/chat.js` that can be configured to only respond to mental-wellness related messages. The enforcement uses a simple keyword detector and can be toggled with environment variables.
-
-Environment variables:
-- `MENTAL_ENFORCEMENT` (true|false) — enable or disable enforcement (default: true)
-- `MENTAL_REDIRECT_MSG` — custom redirect message for non-wellness questions
-- `MENTAL_CRISIS_MSG` — custom message when crisis language is detected
-
-Quick manual test (from project root):
-1. Inspect `netlify/functions/sample_requests.json` for example payloads.
-2. Use a tool like curl or Postman to POST one of the payloads to your deployed Netlify function or to Netlify's CLI local function runner.
-
-Example (Netlify CLI) — run the dev server and call the function locally:
-```powershell
-# start local dev (if using Netlify CLI)
-netlify dev
-
-# then in another terminal call the function (adjust URL if different)
-curl -X POST http://localhost:8888/.netlify/functions/chat -H "Content-Type: application/json" -d @netlify/functions/sample_requests.json
-```
-

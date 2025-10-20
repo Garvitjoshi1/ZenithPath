@@ -108,8 +108,61 @@ Our core idea: create a solution that feels **less like a clinical tool and more
 ---
 
 ## 🏁 Getting Started  
+---
+
+## 🔒 Protecting API Keys & Secrets
+
+**Never commit your API keys or secrets to GitHub!**
+
+### Checklist for Safe Deployment
+
+- ✅ **Do NOT** put your API keys in any file tracked by git (e.g., `.js`, `.json`, `.env` files in the repo)
+- ✅ Use environment variables for all secrets (as in `process.env.GEMINI_API_KEY`)
+- ✅ Add `.env` and any secret config files to your `.gitignore`
+- ✅ Set secrets in Netlify via the Netlify UI or CLI:
+   - Go to Site settings → Environment variables
+   - Add `GEMINI_API_KEY` and any other secrets there
+- ✅ If using GitHub Actions or other CI/CD, set secrets in the repo's Settings → Secrets
+- ✅ Never log or return secrets in your API responses
+
+### How this project handles secrets
+- The Gemini API key is only accessed via `process.env.GEMINI_API_KEY` in serverless functions
+- No secrets are present in the codebase or committed files
+- The README and sample files do not contain any real API keys
+
+**If you ever accidentally commit a secret:**
+1. Immediately delete the secret from your code and commit history
+2. Revoke and regenerate the key from the provider (Google, etc.)
+3. Force-push a cleaned history if needed, and update all deployments
+
+For more, see: [Netlify docs: Environment variables](https://docs.netlify.com/environment-variables/overview/)
+
 
 ### Clone the repo  
 ```bash
 git clone https://github.com/Garvitjoshi1/ZenithAI.git
 cd ZenithAI/public
+---
+
+## Mental-wellness-only enforcement (serverless chat)
+
+This project includes a serverless chat function at `netlify/functions/chat.js` that can be configured to only respond to mental-wellness related messages. The enforcement uses a simple keyword detector and can be toggled with environment variables.
+
+Environment variables:
+- `MENTAL_ENFORCEMENT` (true|false) — enable or disable enforcement (default: true)
+- `MENTAL_REDIRECT_MSG` — custom redirect message for non-wellness questions
+- `MENTAL_CRISIS_MSG` — custom message when crisis language is detected
+
+Quick manual test (from project root):
+1. Inspect `netlify/functions/sample_requests.json` for example payloads.
+2. Use a tool like curl or Postman to POST one of the payloads to your deployed Netlify function or to Netlify's CLI local function runner.
+
+Example (Netlify CLI) — run the dev server and call the function locally:
+```powershell
+# start local dev (if using Netlify CLI)
+netlify dev
+
+# then in another terminal call the function (adjust URL if different)
+curl -X POST http://localhost:8888/.netlify/functions/chat -H "Content-Type: application/json" -d @netlify/functions/sample_requests.json
+```
+

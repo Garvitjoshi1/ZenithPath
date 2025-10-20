@@ -1,1 +1,10 @@
+# Ignore environment files and secrets
+.env
+.env.*
 backend/.env
+# Node and Netlify
+node_modules/
+.netlify/
+# OS
+.DS_Store
+Thumbs.db

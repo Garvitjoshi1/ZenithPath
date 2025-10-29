@@ -114,6 +114,8 @@
             </div>
             <div class="w-full max-w-sm p-8 rounded-2xl glass-card space-y-4">
                 <div id="auth-error" class="hidden p-3 bg-red-500/80 text-white rounded-lg text-sm"></div>
+                <!-- Status messages for sign-in progress (popup check / redirect) -->
+                <div id="auth-status" class="hidden mt-3 p-3 bg-blue-500/80 text-white rounded-lg text-sm"></div>
                 <div id="login-form">
                     <input type="email" id="login-email" placeholder="Email" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                     <input type="password" id="login-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
@@ -374,22 +376,59 @@
         });
         const handleGoogleSignIn = async () => {
             authError.classList.add('hidden');
+            const authStatusEl = document.getElementById('auth-status');
+            const setAuthStatus = (msg) => { if (authStatusEl) { authStatusEl.textContent = msg; authStatusEl.classList.remove('hidden'); } };
+            const clearAuthStatus = () => { if (authStatusEl) { authStatusEl.textContent = ''; authStatusEl.classList.add('hidden'); } };
+
+            // Quick popup preflight: try to open a tiny test window. If it fails, assume popup is blocked and use redirect.
+            let preferRedirect = false;
             try {
-                // REMOVED setPersistence here, as it's now handled globally for reliability
+                setAuthStatus('Checking popup availability...');
+                const testWin = window.open('', 'firebaseSignInTest', 'width=500,height=600');
+                if (!testWin) {
+                    console.debug('Popup preflight: window.open returned null (blocked)');
+                    preferRedirect = true;
+                } else {
+                    try { testWin.close(); } catch (cErr) { console.debug('testWin.close failed', cErr); }
+                }
+            } catch (preErr) {
+                console.debug('Popup preflight error', preErr);
+                preferRedirect = true;
+            }
+
+            if (preferRedirect) {
+                setAuthStatus('Popup blocked — redirecting to Google sign-in...');
+                try { await setPersistence(auth, browserLocalPersistence); } catch (pErr) { console.debug('setPersistence failed', pErr); }
+                try {
+                    await signInWithRedirect(auth, googleProvider);
+                } catch (rErr) {
+                    console.error('signInWithRedirect failed:', rErr);
+                    clearAuthStatus();
+                    showAuthError(rErr.message || 'Google sign-in (redirect) failed.');
+                }
+                return;
+            }
+
+            // Popup path
+            setAuthStatus('Opening sign-in popup...');
+            try {
+                try { await setPersistence(auth, browserLocalPersistence); } catch (pErr) { console.debug('setPersistence failed', pErr); }
                 await signInWithPopup(auth, googleProvider);
+                // onAuthStateChanged will handle successful sign-in and will clear status
             } catch (error) {
                 console.error('signInWithPopup failed:', error);
-                // If popup is blocked or not supported, fallback to redirect flow
                 const fallback = ['auth/popup-blocked', 'auth/popup_closed_by_user', 'auth/operation-not-supported-in-this-environment', 'popup_blocked_by_browser'];
                 if (error && (fallback.includes(error.code) || (error.message && error.message.toLowerCase().includes('popup')))) {
-                    showAuthError('Popup sign-in blocked — trying redirect sign-in...');
+                    setAuthStatus('Popup blocked — trying redirect sign-in...');
                     try {
                         await signInWithRedirect(auth, googleProvider);
                     } catch (rErr) {
                         console.error('signInWithRedirect failed:', rErr);
+                        clearAuthStatus();
                         showAuthError(rErr.message || 'Google sign-in failed. Check console for details.');
                     }
                 } else {
+                    clearAuthStatus();
                     showAuthError(error.message || 'Google sign-in failed.');
                 }
             }

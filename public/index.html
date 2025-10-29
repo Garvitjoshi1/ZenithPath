@@ -262,7 +262,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect, setPersistence, browserLocalPersistence, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit, updateDoc, where, getDocs, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -286,6 +286,17 @@
             .catch((error) => {
                 // This typically means the user is in private/incognito mode, which is fine, but we log the error.
                 console.error("Failed to set persistence:", error.code);
+            });
+        // If a redirect sign-in just occurred, handle its result so we can log or react to it.
+        getRedirectResult(auth)
+            .then((result) => {
+                if (result && result.user) {
+                    console.debug('Redirect sign-in complete. user=', result.user);
+                }
+            })
+            .catch((err) => {
+                // Not fatal — just log for diagnostics
+                console.debug('getRedirectResult error:', err);
             });
         // --------------------------------------------------------------------------
 

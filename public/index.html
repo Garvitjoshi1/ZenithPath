@@ -383,7 +383,8 @@
 
         function setupAppForUser() {
             lucide.createIcons();
-            showPage('streaks-page');
+            // Open chat by default after sign-in so users land directly in the conversation
+            showPage('chat-page');
             setupStreaks();
             setupProfile();
             setupCommunity();

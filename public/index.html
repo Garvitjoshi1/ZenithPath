@@ -274,7 +274,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit, updateDoc, where, getDocs, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -308,6 +308,7 @@
 
         // --- Master Auth State Change Handler ---
         onAuthStateChanged(auth, async (user) => {
+            console.debug('onAuthStateChanged fired. user=', user);
             if (user) {
                 currentUser = user;
                 const userDocRef = doc(db, "users", user.uid);
@@ -375,7 +376,26 @@
         });
         const handleGoogleSignIn = async () => {
             authError.classList.add('hidden');
-            try { await signInWithPopup(auth, googleProvider); } catch (error) { showAuthError(error.message); }
+            try {
+                // Ensure persistence is local so the session survives page reloads
+                try { await setPersistence(auth, browserLocalPersistence); } catch (pErr) { console.debug('setPersistence failed', pErr); }
+                await signInWithPopup(auth, googleProvider);
+            } catch (error) {
+                console.error('signInWithPopup failed:', error);
+                // If popup is blocked or not supported, fallback to redirect flow
+                const fallback = ['auth/popup-blocked', 'auth/popup_closed_by_user', 'auth/operation-not-supported-in-this-environment', 'popup_blocked_by_browser'];
+                if (error && (fallback.includes(error.code) || (error.message && error.message.toLowerCase().includes('popup')))) {
+                    showAuthError('Popup sign-in blocked — trying redirect sign-in...');
+                    try {
+                        await signInWithRedirect(auth, googleProvider);
+                    } catch (rErr) {
+                        console.error('signInWithRedirect failed:', rErr);
+                        showAuthError(rErr.message || 'Google sign-in failed. Check console for details.');
+                    }
+                } else {
+                    showAuthError(error.message || 'Google sign-in failed.');
+                }
+            }
         };
         document.getElementById('google-login-btn').addEventListener('click', handleGoogleSignIn);
         document.getElementById('google-signup-btn').addEventListener('click', handleGoogleSignIn);

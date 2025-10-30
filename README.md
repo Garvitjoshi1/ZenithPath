@@ -135,4 +135,4 @@ For more, see: [Netlify docs: Environment variables](https://docs.netlify.com/en
 
 ### Clone the repo  
 ```bash
-git clone [https://github.com/Garvitjoshi1/ZenithAI.git](https://github.com/Garvitjoshi1/ZenithAI.git)
+git clone https://github.com/Garvitjoshi1/ZenithAI.git

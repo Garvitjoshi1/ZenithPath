@@ -1,4 +1,8 @@
-// netlify.toml
+# Netlify configuration file
+[build]
+  publish = "."
+  command = ""  # No build command needed for static files
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -7,17 +11,27 @@
 [functions]
   # Directory where your Netlify Functions are located
   directory = "netlify/functions"
+  included_files = ["functions/package.json", "functions/package-lock.json"]
 
-[functions.chat]
-  # Enable session affinity
+[functions.chat-secure]
+  # Enable session affinity and increase resources for chat function
   memory = 1024
   timeout = 10
 
 [functions.auth]
-  memory = 1024
+  # Configuration for auth verification function
+  memory = 512
   timeout = 10
 
 [[headers]]
+  # Security headers for all pages
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self' https://cdn.tailwindcss.com https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://*.firebaseapp.com https://*.googleapis.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://*.firebaseapp.com https://*.googleapis.com;"
   # Define which paths this specific [[headers]] block will cover.
   for = "/*"
     [headers.values]

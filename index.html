@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,149 +23,356 @@
     </script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .hidden { display: none !important; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hidden {
+            display: none !important;
+        }
 
         .aurora-bg {
             /* Light mode aurora */
             background-color: #f9fafb;
-             background-image:
-                radial-gradient(at 20% 15%, hsla(212,80%,80%,0.3) 0px, transparent 50%),
-                radial-gradient(at 80% 20%, hsla(289,80%,80%,0.2) 0px, transparent 50%),
-                radial-gradient(at 15% 80%, hsla(180,80%,85%,0.3) 0px, transparent 50%),
-                radial-gradient(at 85% 85%, hsla(30,80%,80%,0.2) 0px, transparent 50%);
+            background-image:
+                radial-gradient(at 20% 15%, hsla(212, 80%, 80%, 0.3) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, hsla(289, 80%, 80%, 0.2) 0px, transparent 50%),
+                radial-gradient(at 15% 80%, hsla(180, 80%, 85%, 0.3) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, hsla(30, 80%, 80%, 0.2) 0px, transparent 50%);
             animation: aurora-animation 20s infinite linear;
         }
+
         .dark .aurora-bg {
             /* Dark mode aurora */
             background-color: #111827;
             background-image:
-                radial-gradient(at 20% 15%, hsla(212,80%,55%,0.2) 0px, transparent 50%),
-                radial-gradient(at 80% 20%, hsla(289,80%,55%,0.2) 0px, transparent 50%),
-                radial-gradient(at 15% 80%, hsla(180,80%,60%,0.2) 0px, transparent 50%),
-                radial-gradient(at 85% 85%, hsla(30,80%,55%,0.15) 0px, transparent 50%);
+                radial-gradient(at 20% 15%, hsla(212, 80%, 55%, 0.2) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, hsla(289, 80%, 55%, 0.2) 0px, transparent 50%),
+                radial-gradient(at 15% 80%, hsla(180, 80%, 60%, 0.2) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, hsla(30, 80%, 55%, 0.15) 0px, transparent 50%);
         }
 
-        @keyframes aurora-animation { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes aurora-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
 
         .glass-card {
             background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
+
         .dark .glass-card {
             background: rgba(31, 41, 55, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
 
-        .flame-icon.active { 
-            color: #f97316; 
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+
+        .flame-icon.active {
+            color: #f97316;
             animation: pulse-flame 2s infinite ease-in-out;
         }
+
         @keyframes pulse-flame {
-            0%, 100% { transform: scale(1); text-shadow: 0 0 10px #f97316, 0 0 20px #f97316; }
-            50% { transform: scale(1.1); text-shadow: 0 0 20px #f97316, 0 0 40px #ef4444; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 10px #f97316, 0 0 20px #f97316;
+            }
+
+            50% {
+                transform: scale(1.1);
+                text-shadow: 0 0 20px #f97316, 0 0 40px #ef4444;
+            }
         }
 
         .breathing-circle {
-            width: 200px; height: 200px; border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
             background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             box-shadow: 0 0 40px rgba(102, 166, 255, 0.6);
             transition: transform 0.5s ease-out;
         }
-        .breathing-circle.breathing { animation: breathe 10s infinite ease-in-out; }
+
+        .breathing-circle.breathing {
+            animation: breathe 10s infinite ease-in-out;
+        }
+
         @keyframes breathe {
-            0%   { transform: scale(1); } 40%  { transform: scale(1.5); }
-            60%  { transform: scale(1.5); } 100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(1.5);
+            }
+
+            60% {
+                transform: scale(1.5);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .toggle-switch {
-            width: 50px; height: 28px; background-color: #e5e7eb; border-radius: 9999px;
-            position: relative; cursor: pointer; transition: background-color 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
+            width: 50px;
+            height: 28px;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-        .dark .toggle-switch { background-color: #374151; border: 1px solid rgba(255,255,255,0.1); }
+
+        .dark .toggle-switch {
+            background-color: #374151;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         .toggle-thumb {
-            width: 22px; height: 22px; background-color: white; border-radius: 9999px;
-            position: absolute; top: 2px; left: 2px; transition: transform 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            width: 22px;
+            height: 22px;
+            background-color: white;
+            border-radius: 9999px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-        .dark .toggle-switch .toggle-thumb { transform: translateX(22px); }
+
+        .dark .toggle-switch .toggle-thumb {
+            transform: translateX(22px);
+        }
     </style>
 </head>
+
 <body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-white/90 antialiased">
 
     <div id="app-container" class="w-full h-screen flex flex-col">
 
         <div id="auth-page" class="flex flex-col items-center justify-center h-full p-6 aurora-bg">
-             <div class="absolute top-6 right-6">
+            <div class="absolute top-6 right-6">
                 <div id="auth-theme-toggle" class="toggle-switch">
                     <div class="toggle-thumb"></div>
                 </div>
             </div>
             <div class="text-center mb-10">
-                <h1 class="text-5xl font-extrabold text-slate-800 dark:text-white" style="text-shadow: 0 2px 10px rgba(0,0,0,0.1);">Zenith Path</h1>
+                <h1 class="text-5xl font-extrabold text-slate-800 dark:text-white"
+                    style="text-shadow: 0 2px 10px rgba(0,0,0,0.1);">Zenith Path</h1>
                 <p class="text-slate-600 dark:text-white/70 mt-2">Find your calm, reach your peak.</p>
             </div>
             <div class="w-full max-w-sm p-8 rounded-2xl glass-card space-y-4">
                 <div id="auth-error" class="hidden p-3 bg-red-500/80 text-white rounded-lg text-sm"></div>
                 <div id="login-form">
-                    <input type="email" id="login-email" placeholder="Email" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <input type="password" id="login-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <button id="login-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Login</button>
-                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-slate-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or continue with</span></div></div>
-                    <button id="google-login-btn" class="w-full bg-white text-slate-800 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign in with Google</button>
-                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Don't have an account? <a href="#" id="show-signup" class="font-bold text-indigo-500 dark:text-indigo-400 hover:underline">Sign Up</a></p>
+                    <input type="email" id="login-email" placeholder="Email"
+                        class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="password" id="login-password" placeholder="Password"
+                        class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <button id="login-btn"
+                        class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Login</button>
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center"><span
+                                class="w-full border-t border-gray-300 dark:border-white/20"></span></div>
+                        <div class="relative flex justify-center text-xs uppercase"><span
+                                class="bg-gray-50 dark:bg-slate-800/25 px-2 text-slate-500 dark:text-white/60"
+                                style="backdrop-filter: blur(12px);">Or continue with</span></div>
+                    </div>
+                    <button id="google-login-btn"
+                        class="w-full bg-white text-slate-800 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300"><svg
+                            class="w-5 h-5 mr-3" viewBox="0 0 48 48">
+                            <path fill="#FFC107"
+                                d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z">
+                            </path>
+                            <path fill="#FF3D00"
+                                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z">
+                            </path>
+                            <path fill="#4CAF50"
+                                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z">
+                            </path>
+                            <path fill="#1976D2"
+                                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z">
+                            </path>
+                        </svg>Sign in with Google</button>
+                    <button id="guest-btn"
+                        class="w-full mt-3 bg-transparent text-slate-700 dark:text-white/80 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all flex items-center justify-center border border-dashed border-gray-300">Continue
+                        as Guest</button>
+                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Don't have an account? <a
+                            href="#" id="show-signup"
+                            class="font-bold text-indigo-500 dark:text-indigo-400 hover:underline">Sign Up</a></p>
                 </div>
                 <div id="signup-form" class="hidden">
-                    <input type="text" id="signup-username" placeholder="Username" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <input type="email" id="signup-email" placeholder="Email" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <input type="password" id="signup-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <button id="signup-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Create Account</button>
-                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-slate-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or sign up with</span></div></div>
-                    <button id="google-signup-btn" class="w-full bg-white text-slate-800 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign up with Google</button>
-                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Already have an account? <a href="#" id="show-login" class="font-bold text-indigo-500 dark:text-indigo-400 hover:underline">Login</a></p>
+                    <input type="text" id="signup-username" placeholder="Username"
+                        class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="email" id="signup-email" placeholder="Email"
+                        class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="password" id="signup-password" placeholder="Password"
+                        class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <button id="signup-btn"
+                        class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Create
+                        Account</button>
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center"><span
+                                class="w-full border-t border-gray-300 dark:border-white/20"></span></div>
+                        <div class="relative flex justify-center text-xs uppercase"><span
+                                class="bg-gray-50 dark:bg-slate-800/25 px-2 text-slate-500 dark:text-white/60"
+                                style="backdrop-filter: blur(12px);">Or sign up with</span></div>
+                    </div>
+                    <button id="google-signup-btn"
+                        class="w-full bg-white text-slate-800 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300"><svg
+                            class="w-5 h-5 mr-3" viewBox="0 0 48 48">
+                            <path fill="#FFC107"
+                                d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z">
+                            </path>
+                            <path fill="#FF3D00"
+                                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z">
+                            </path>
+                            <path fill="#4CAF50"
+                                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z">
+                            </path>
+                            <path fill="#1976D2"
+                                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z">
+                            </path>
+                        </svg>Sign up with Google</button>
+                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Already have an account? <a
+                            href="#" id="show-login"
+                            class="font-bold text-indigo-500 dark:text-indigo-400 hover:underline">Login</a></p>
                 </div>
             </div>
         </div>
 
         <div id="main-app-page" class="hidden flex-col h-full aurora-bg">
-             <header class="bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg p-4 flex justify-between items-center border-b border-black/10 dark:border-white/10 sticky top-0 z-20">
+            <header
+                class="bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg p-4 flex justify-between items-center border-b border-black/10 dark:border-white/10 sticky top-0 z-20">
                 <h1 class="text-xl font-bold text-slate-800 dark:text-white">Zenith Path</h1>
                 <div class="flex items-center space-x-4">
-                    <span id="welcome-user" class="text-slate-700 dark:text-white/80 text-sm font-medium hidden sm:block"></span>
+                    <span id="welcome-user"
+                        class="text-slate-700 dark:text-white/80 text-sm font-medium hidden sm:block"></span>
                     <div id="theme-toggle" class="toggle-switch">
                         <div class="toggle-thumb"></div>
                     </div>
-                    <img id="header-pfp" src="https://placehold.co/40x40/1f2937/FFF?text=ZP" class="w-8 h-8 rounded-full object-cover border-2 border-white/20 cursor-pointer" title="Go to Profile">
-                    <button id="logout-btn" title="Logout"><i data-lucide="log-out" class="w-5 h-5 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white"></i></button>
+                    <img id="header-pfp" src="https://placehold.co/40x40/1f2937/FFF?text=ZP"
+                        class="w-8 h-8 rounded-full object-cover border-2 border-white/20 cursor-pointer"
+                        title="Go to Profile">
+                    <button id="logout-btn" title="Logout"><i data-lucide="log-out"
+                            class="w-5 h-5 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white"></i></button>
                 </div>
             </header>
 
             <main class="flex-1 overflow-y-auto custom-scrollbar">
                 <div id="chat-page" class="page-content flex flex-col h-full">
-                     <main id="chat-container" class="flex-1 p-6 overflow-y-auto custom-scrollbar">
-                        <div class="flex justify-start mb-4 chat-bubble"><div class="glass-card p-3 rounded-lg max-w-md shadow-lg bg-gray-200 dark:bg-gray-800/25"><p class="text-sm">Hello! I'm your companion on the path to wellness. How are you feeling today?</p></div></div>
+                    <main id="chat-container" class="flex-1 p-6 overflow-y-auto custom-scrollbar">
+                        <div class="flex justify-start mb-4 chat-bubble">
+                            <div class="glass-card p-3 rounded-lg max-w-md shadow-lg bg-gray-200 dark:bg-gray-800/25">
+                                <p class="text-sm">Hello! I'm your companion on the path to wellness. How are you
+                                    feeling today?</p>
+                            </div>
+                        </div>
                     </main>
-                    <div id="loading-indicator" class="px-6 pb-2 hidden"><div class="flex items-center justify-start"><div class="glass-card p-3 rounded-lg shadow-lg animate-pulse"><div class="flex items-center space-x-2"><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-200"></div><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-400"></div></div></div></div></div>
-                    <footer class="p-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg border-t border-black/10 dark:border-white/10 sticky bottom-0"><div class="flex items-center"><input type="text" id="user-input" placeholder="Type your message..." class="flex-1 px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"><button id="send-btn" class="ml-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]"><i data-lucide="send"></i></button></div></footer>
+                    <div id="loading-indicator" class="px-6 pb-2 hidden">
+                        <div class="flex items-center justify-start">
+                            <div class="glass-card p-3 rounded-lg shadow-lg animate-pulse">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-200"></div>
+                                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-400"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer
+                        class="p-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg border-t border-black/10 dark:border-white/10 sticky bottom-0">
+                        <div class="flex items-center"><input type="text" id="user-input"
+                                placeholder="Type your message..."
+                                class="flex-1 px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"><button
+                                id="send-btn"
+                                class="ml-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]"><i
+                                    data-lucide="send"></i></button></div>
+                    </footer>
                 </div>
 
-                <div id="streaks-page" class="page-content hidden p-6"><div class="w-full max-w-3xl mx-auto"><h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4">Your Wellness Streak</h2><div class="glass-card p-6 rounded-2xl text-center shadow-lg relative overflow-hidden"><p class="text-lg text-slate-700 dark:text-white/70">Current Streak</p><p id="streak-count" class="text-7xl font-extrabold my-2 text-slate-900 dark:text-white">0</p><p class="text-slate-700 dark:text-white/70">days of checking in!</p><button id="checkin-btn" class="mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.6)]">Check-in for Today</button></div><div id="quote-container" class="hidden mt-6 bg-green-500/10 border-l-4 border-green-400 text-green-700 dark:text-green-300 p-4 rounded-md"><p class="font-bold">Way to go!</p><p id="quote-text" class="text-sm"></p></div><div class="mt-8 glass-card p-4 rounded-xl"><h3 class="text-xl font-bold text-slate-800 dark:text-white mb-3">This Month's Progress</h3><div id="streak-calendar" class="grid grid-cols-7 gap-y-3 text-center text-lg text-slate-500 dark:text-white/50"></div></div></div></div>
+                <div id="streaks-page" class="page-content hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4">Your Wellness Streak</h2>
+                        <div class="glass-card p-6 rounded-2xl text-center shadow-lg relative overflow-hidden">
+                            <p class="text-lg text-slate-700 dark:text-white/70">Current Streak</p>
+                            <p id="streak-count" class="text-7xl font-extrabold my-2 text-slate-900 dark:text-white">0
+                            </p>
+                            <p class="text-slate-700 dark:text-white/70">days of checking in!</p><button
+                                id="checkin-btn"
+                                class="mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.6)]">Check-in
+                                for Today</button>
+                        </div>
+                        <div id="quote-container"
+                            class="hidden mt-6 bg-green-500/10 border-l-4 border-green-400 text-green-700 dark:text-green-300 p-4 rounded-md">
+                            <p class="font-bold">Way to go!</p>
+                            <p id="quote-text" class="text-sm"></p>
+                        </div>
+                        <div class="mt-8 glass-card p-4 rounded-xl">
+                            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-3">This Month's Progress</h3>
+                            <div id="streak-calendar"
+                                class="grid grid-cols-7 gap-y-3 text-center text-lg text-slate-500 dark:text-white/50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <div id="breathe-page" class="page-content hidden p-6"><div class="w-full max-w-3xl mx-auto text-center flex flex-col items-center justify-center h-full"><h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">A Moment of Calm</h2><div class="breathing-circle"><span id="breathe-text" class="text-white text-2xl font-bold">Ready?</span></div><p id="breathe-timer" class="text-slate-600 dark:text-white/60 mt-6 text-lg">2-Minute Session</p><div class="mt-6 flex space-x-4"><button id="start-breathe-btn" class="bg-gradient-to-r from-green-400 to-teal-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(16,185,129,0.5)]">Start</button><button id="stop-breathe-btn" class="hidden bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(239,68,68,0.5)]">Stop</button></div></div></div>
+                <div id="breathe-page" class="page-content hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto text-center flex flex-col items-center justify-center h-full">
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">A Moment of Calm</h2>
+                        <div class="breathing-circle"><span id="breathe-text"
+                                class="text-white text-2xl font-bold">Ready?</span></div>
+                        <p id="breathe-timer" class="text-slate-600 dark:text-white/60 mt-6 text-lg">2-Minute Session
+                        </p>
+                        <div class="mt-6 flex space-x-4"><button id="start-breathe-btn"
+                                class="bg-gradient-to-r from-green-400 to-teal-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(16,185,129,0.5)]">Start</button><button
+                                id="stop-breathe-btn"
+                                class="hidden bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(239,68,68,0.5)]">Stop</button>
+                        </div>
+                    </div>
+                </div>
 
                 <div id="community-page" class="page-content hidden p-6">
-                     <div class="w-full max-w-3xl mx-auto">
+                    <div class="w-full max-w-3xl mx-auto">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Community Wall</h2>
-                            <button id="open-post-modal-btn" class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)] flex items-center space-x-2">
+                            <button id="open-post-modal-btn"
+                                class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)] flex items-center space-x-2">
                                 <i data-lucide="plus"></i>
                                 <span>Create Post</span>
                             </button>
@@ -177,9 +385,14 @@
                     <div class="w-full max-w-3xl mx-auto">
                         <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4">Friends</h2>
                         <div class="flex border-b border-gray-300 dark:border-white/20 mb-4">
-                            <button data-tab="my-friends" class="friends-tab-btn px-4 py-2 font-semibold border-b-2 border-indigo-500 text-indigo-500">My Friends</button>
-                            <button data-tab="requests" class="friends-tab-btn px-4 py-2 font-semibold text-slate-500 dark:text-white/60">Requests</button>
-                            <button data-tab="find-friends" class="friends-tab-btn px-4 py-2 font-semibold text-slate-500 dark:text-white/60">Find Friends</button>
+                            <button data-tab="my-friends"
+                                class="friends-tab-btn px-4 py-2 font-semibold border-b-2 border-indigo-500 text-indigo-500">My
+                                Friends</button>
+                            <button data-tab="requests"
+                                class="friends-tab-btn px-4 py-2 font-semibold text-slate-500 dark:text-white/60">Requests</button>
+                            <button data-tab="find-friends"
+                                class="friends-tab-btn px-4 py-2 font-semibold text-slate-500 dark:text-white/60">Find
+                                Friends</button>
                         </div>
                         <div id="my-friends-content" class="friends-tab-content space-y-3"></div>
                         <div id="requests-content" class="friends-tab-content hidden space-y-3"></div>
@@ -190,53 +403,81 @@
                 <div id="profile-page" class="page-content hidden p-6">
                     <div class="w-full max-w-3xl mx-auto">
                         <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">Your Profile</h2>
-                        <div class="glass-card p-8 rounded-2xl flex flex-col items-center sm:flex-row sm:items-start space-y-6 sm:space-y-0 sm:space-x-8">
+                        <div
+                            class="glass-card p-8 rounded-2xl flex flex-col items-center sm:flex-row sm:items-start space-y-6 sm:space-y-0 sm:space-x-8">
                             <div class="relative group">
-                                <img id="profile-pic-preview" src="https://placehold.co/150x150/1f2937/FFF?text=+" class="w-36 h-36 rounded-full object-cover border-2 border-gray-300 dark:border-white/20">
-                                <label for="pfp-upload" class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                <img id="profile-pic-preview" src="https://placehold.co/150x150/1f2937/FFF?text=+"
+                                    class="w-36 h-36 rounded-full object-cover border-2 border-gray-300 dark:border-white/20">
+                                <label for="pfp-upload"
+                                    class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                     <i data-lucide="camera" class="w-8 h-8"></i>
                                 </label>
                                 <input type="file" id="pfp-upload" class="hidden" accept="image/*">
                             </div>
                             <div class="flex-1 w-full">
                                 <div>
-                                    <label for="profile-username" class="text-sm text-slate-600 dark:text-white/70">Username</label>
-                                    <input type="text" id="profile-username" class="mt-1 w-full px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <label for="profile-username"
+                                        class="text-sm text-slate-600 dark:text-white/70">Username</label>
+                                    <input type="text" id="profile-username"
+                                        class="mt-1 w-full px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                                 </div>
                                 <div class="mt-4">
-                                    <label for="profile-bio" class="text-sm text-slate-600 dark:text-white/70">Your Bio</label>
-                                    <textarea id="profile-bio" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="A short bio about your wellness journey..."></textarea>
+                                    <label for="profile-bio" class="text-sm text-slate-600 dark:text-white/70">Your
+                                        Bio</label>
+                                    <textarea id="profile-bio" rows="3"
+                                        class="mt-1 w-full px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                        placeholder="A short bio about your wellness journey..."></textarea>
                                 </div>
-                                <button id="save-profile-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]">Save Changes</button>
+                                <button id="save-profile-btn"
+                                    class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]">Save
+                                    Changes</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </main>
 
-            <nav class="flex justify-around bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg p-2 border-t border-black/10 dark:border-white/10 sticky bottom-0 z-20">
-                <button data-page="chat-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="message-circle"></i><span class="text-xs mt-1">Chat</span></button>
-                <button data-page="streaks-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="flame"></i><span class="text-xs mt-1">Streaks</span></button>
-                <button data-page="breathe-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="wind"></i><span class="text-xs mt-1">Breathe</span></button>
-                <button data-page="community-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="users"></i><span class="text-xs mt-1">Community</span></button>
-                <button data-page="friends-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="user-check"></i><span class="text-xs mt-1">Friends</span></button>
-                <button data-page="profile-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="user-circle"></i><span class="text-xs mt-1">Profile</span></button>
+            <nav
+                class="flex justify-around bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg p-2 border-t border-black/10 dark:border-white/10 sticky bottom-0 z-20">
+                <button data-page="chat-page"
+                    class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i
+                        data-lucide="message-circle"></i><span class="text-xs mt-1">Chat</span></button>
+                <button data-page="streaks-page"
+                    class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i
+                        data-lucide="flame"></i><span class="text-xs mt-1">Streaks</span></button>
+                <button data-page="breathe-page"
+                    class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i
+                        data-lucide="wind"></i><span class="text-xs mt-1">Breathe</span></button>
+                <button data-page="community-page"
+                    class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i
+                        data-lucide="users"></i><span class="text-xs mt-1">Community</span></button>
+                <button data-page="friends-page"
+                    class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i
+                        data-lucide="user-check"></i><span class="text-xs mt-1">Friends</span></button>
+                <button data-page="profile-page"
+                    class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i
+                        data-lucide="user-circle"></i><span class="text-xs mt-1">Profile</span></button>
             </nav>
         </div>
     </div>
 
-    <div id="post-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="post-modal"
+        class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass-card w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
-            <button id="close-post-modal-btn" class="absolute top-4 right-4 text-slate-500 dark:text-white/60 hover:text-slate-800 dark:hover:text-white">
+            <button id="close-post-modal-btn"
+                class="absolute top-4 right-4 text-slate-500 dark:text-white/60 hover:text-slate-800 dark:hover:text-white">
                 <i data-lucide="x"></i>
             </button>
             <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-4">Create a New Post</h2>
 
-            <textarea id="modal-post-content" class="w-full p-2 h-28 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Share your thoughts..."></textarea>
+            <textarea id="modal-post-content"
+                class="w-full p-2 h-28 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Share your thoughts..."></textarea>
 
             <div class="mt-4">
                 <img id="modal-image-preview" src="" class="hidden w-full max-h-48 object-contain rounded-lg mb-2">
-                <label for="modal-image-upload" class="cursor-pointer text-sm text-indigo-500 dark:text-indigo-400 font-semibold hover:underline flex items-center space-x-2">
+                <label for="modal-image-upload"
+                    class="cursor-pointer text-sm text-indigo-500 dark:text-indigo-400 font-semibold hover:underline flex items-center space-x-2">
                     <i data-lucide="image-plus"></i>
                     <span>Add Image</span>
                 </label>
@@ -244,11 +485,14 @@
             </div>
 
             <div class="mt-4 border-t border-black/10 dark:border-white/10 pt-4">
-                <h3 class="text-sm font-semibold text-slate-600 dark:text-white/70 mb-2">Feeling proud? Share your streak!</h3>
+                <h3 class="text-sm font-semibold text-slate-600 dark:text-white/70 mb-2">Feeling proud? Share your
+                    streak!</h3>
                 <div id="streak-templates-container" class="flex flex-wrap gap-2"></div>
             </div>
 
-            <button id="create-post-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]">Post to Community</button>
+            <button id="create-post-btn"
+                class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]">Post
+                to Community</button>
         </div>
     </div>
 
@@ -276,7 +520,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider(); 
+        const googleProvider = new GoogleAuthProvider();
         let currentUser = null;
         let userData = null;
 
@@ -295,31 +539,56 @@
         // --- Master Auth State Change Handler ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // --- LOGGED-IN USER ---
                 currentUser = user;
                 const userDocRef = doc(db, "users", user.uid);
                 const userDocSnap = await getDoc(userDocRef);
                 if (userDocSnap.exists()) {
                     userData = userDocSnap.data();
-                } else { 
-                     const newUserData = {
+                } else {
+                    const newUserData = {
                         username: user.displayName || 'Zenith User', email: user.email,
                         streak: 0, lastCheckIn: null, checkInHistory: [],
                         bio: "", profilePicUrl: ""
                     };
-                     await setDoc(doc(db, "users", user.uid), newUserData);
-                     userData = newUserData;
+                    await setDoc(doc(db, "users", user.uid), newUserData);
+                    userData = newUserData;
                 }
                 document.getElementById('welcome-user').textContent = `Hi, ${userData.username}!`;
                 document.getElementById('header-pfp').src = userData.profilePicUrl || `https://placehold.co/40x40/1f2937/FFF?text=${(userData.username || 'Z').charAt(0)}`;
 
+                // Show personalized header items
+                document.getElementById('welcome-user').classList.remove('hidden');
+                document.getElementById('header-pfp').classList.remove('hidden');
+                document.getElementById('logout-btn').classList.remove('hidden');
+
+                // Show app, hide auth page
                 document.getElementById('auth-page').classList.add('hidden');
                 document.getElementById('main-app-page').classList.remove('hidden');
                 document.getElementById('main-app-page').classList.add('flex');
-                setupAppForUser();
+
+                setupAppForUser(); // This sets up streaks, profile, etc.
+                setupNavListeners(true); // true = isLoggedIn
             } else {
-                currentUser = null; userData = null;
-                document.getElementById('auth-page').classList.remove('hidden');
-                document.getElementById('main-app-page').classList.add('hidden');
+                // --- GUEST USER ---
+                currentUser = null;
+                userData = null;
+
+                // Hide personalized header items
+                document.getElementById('welcome-user').classList.add('hidden');
+                document.getElementById('header-pfp').classList.add('hidden');
+                document.getElementById('logout-btn').classList.add('hidden');
+
+                // Show app, hide auth page
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('main-app-page').classList.remove('hidden');
+                document.getElementById('main-app-page').classList.add('flex');
+
+                setupNavListeners(false); // false = isGuest
+
+                // Show chat page by default for guests
+                lucide.createIcons();
+                showPage('chat-page');
             }
         });
 
@@ -331,7 +600,21 @@
         document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.add('hidden'); signupForm.classList.remove('hidden'); });
         document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); signupForm.classList.add('hidden'); loginForm.classList.remove('hidden'); });
 
-        document.getElementById('signup-btn').addEventListener('click', async () => { 
+        // Continue as Guest button - allows users to access chat without signing in
+        const guestBtn = document.getElementById('guest-btn');
+        guestBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.setItem('guest', '1');
+            // Hide auth, show main app as guest
+            document.getElementById('auth-page').classList.add('hidden');
+            document.getElementById('main-app-page').classList.remove('hidden');
+            document.getElementById('main-app-page').classList.add('flex');
+            setupNavListeners(false);
+            lucide.createIcons();
+            showPage('chat-page');
+        });
+
+        document.getElementById('signup-btn').addEventListener('click', async () => {
             const username = document.getElementById('signup-username').value;
             const email = document.getElementById('signup-email').value;
             const password = document.getElementById('signup-password').value;
@@ -348,12 +631,12 @@
             if (!email || !password) { showAuthError("Please fill in all fields."); return; }
             try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { showAuthError(error.message); }
         });
-         document.getElementById('logout-btn').addEventListener('click', () => {
-             Swal.fire({
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            Swal.fire({
                 title: 'Are you sure?', text: "You will be logged out.", icon: 'warning',
                 showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, logout', 
-                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff', 
+                confirmButtonText: 'Yes, logout',
+                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff',
                 color: htmlEl.classList.contains('dark') ? '#ffffff' : '#000000'
             }).then((result) => { if (result.isConfirmed) { signOut(auth); } })
         });
@@ -366,19 +649,73 @@
         document.getElementById('header-pfp').addEventListener('click', () => showPage('profile-page'));
 
         function setupAppForUser() {
-    lucide.createIcons();
-    showPage('chat-page'); 
-    setupStreaks();
-    setupProfile();
-    setupCommunity();
-    setupFriends();
-}
-
+            lucide.createIcons();
+            showPage('chat-page');
+            setupStreaks();
+            setupProfile();
+            setupCommunity();
+            setupFriends();
+        }
 
         // --- Page Navigation with GSAP Animation ---
         const navButtons = document.querySelectorAll('.nav-btn');
         const contentPages = document.querySelectorAll('.page-content');
         let currentPageId = null;
+
+        // Function to show the "Sign Up" popup
+        const showLoginPrompt = (pageName) => {
+            Swal.fire({
+                title: 'Create a Profile to Use This Feature',
+                text: `Sign up or log in to track your ${pageName}, join the community, and add friends.`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Sign Up / Login',
+                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                color: htmlEl.classList.contains('dark') ? '#ffffff' : '#000000'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show the auth page
+                    document.getElementById('main-app-page').classList.add('hidden');
+                    document.getElementById('auth-page').classList.remove('hidden');
+                    document.getElementById('auth-page').classList.add('flex');
+                }
+            });
+        };
+
+        // NEW FUNCTION to set up navigation
+        function setupNavListeners(isLoggedIn) {
+            const protectedPages = ['streaks-page', 'community-page', 'friends-page', 'profile-page'];
+
+            document.querySelectorAll('.nav-btn').forEach(button => {
+                // Clone and replace to remove old listeners
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+
+                const pageId = newButton.dataset.page;
+                const pageName = pageId.split('-')[0];
+
+                if (!isLoggedIn && protectedPages.includes(pageId)) {
+                    // GUEST: Click on a protected page
+                    newButton.addEventListener('click', () => showLoginPrompt(pageName));
+                } else {
+                    // LOGGED-IN: Click works normally
+                    // GUEST: Click on a public page (chat, breathe)
+                    newButton.addEventListener('click', () => showPage(pageId));
+                }
+            });
+
+            // Also handle the header profile picture click
+            const headerPfp = document.getElementById('header-pfp');
+            const newHeaderPfp = headerPfp.cloneNode(true);
+            headerPfp.parentNode.replaceChild(newHeaderPfp, headerPfp);
+            if (isLoggedIn) {
+                newHeaderPfp.addEventListener('click', () => showPage('profile-page'));
+            } else {
+                // It's hidden, but add listener anyway in case we show it
+                newHeaderPfp.addEventListener('click', () => showLoginPrompt('profile'));
+            }
+        }
+
         function showPage(pageId) {
             if (pageId === currentPageId) return;
             const oldPage = document.getElementById(currentPageId);
@@ -393,7 +730,7 @@
 
             if (['chat-page', 'breathe-page'].includes(pageId)) { newPage.classList.add('flex', 'flex-col', 'h-full'); }
 
-            navButtons.forEach(btn => {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
                 const isSelected = btn.dataset.page === pageId;
                 btn.classList.toggle('bg-black/5', !htmlEl.classList.contains('dark') && isSelected);
                 btn.classList.toggle('dark:bg-white/10', htmlEl.classList.contains('dark') && isSelected);
@@ -404,7 +741,6 @@
             });
             currentPageId = pageId;
         }
-        navButtons.forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
 
         // --- Gemini API Setup ---
         const API_URL = `/.netlify/functions/chat`;
@@ -424,21 +760,22 @@
         async function getAuraResponse(message) {
             loadingIndicator.classList.remove('hidden');
             try {
-        // UPDATED: The payload now includes the system prompt to send to our function
-        const payload = { message: message, systemPrompt: CHATBOT_SYSTEM_PROMPT };
-        const response = await fetch(API_URL, { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify(payload) 
-        });
+                // UPDATED: The payload now includes the system prompt to send to our function
+                const payload = { message: message, systemPrompt: CHATBOT_SYSTEM_PROMPT };
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
                 if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
                 const result = await response.json();
                 const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
                 addMessageToChat(aiText || "I'm having trouble thinking right now.", 'ai');
-            } catch (error) { addMessageToChat("Oops! Something went wrong on my end.", 'ai'); console.error(error);
+            } catch (error) {
+                addMessageToChat("Oops! Something went wrong on my end.", 'ai'); console.error(error);
             } finally { loadingIndicator.classList.add('hidden'); }
         }
-        function addMessageToChat(message, sender) { 
+        function addMessageToChat(message, sender) {
             const msgDiv = document.createElement('div');
             msgDiv.className = `flex mb-4 chat-bubble ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
             msgDiv.innerHTML = `<div class="glass-card p-3 rounded-xl max-w-md shadow-lg ${sender === 'user' ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white' : 'bg-gray-200 dark:bg-gray-800/25'}"><p class="text-sm">${message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p></div>`;
@@ -446,7 +783,39 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             gsap.from(msgDiv, { opacity: 0, y: 20, duration: 0.5, ease: "power3.out" });
         }
-        function handleSend() { const message = userInput.value.trim(); if (message) { addMessageToChat(message, 'user'); userInput.value = ''; getAuraResponse(message); } }
+        async function handleSend() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // If user is a guest and hasn't been prompted yet, show signup prompt
+            if (!currentUser && !sessionStorage.getItem('guestPrompted')) {
+                const result = await Swal.fire({
+                    title: 'Save your chats? Create a profile',
+                    text: 'Create a profile to save your chat history and access personalized features. Would you like to create one now?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Create Profile',
+                    cancelButtonText: 'Continue as Guest',
+                    background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                    color: htmlEl.classList.contains('dark') ? '#ffffff' : '#000000'
+                });
+
+                if (result.isConfirmed) {
+                    // Show signup form
+                    document.getElementById('main-app-page').classList.add('hidden');
+                    document.getElementById('auth-page').classList.remove('hidden');
+                    loginForm.classList.add('hidden');
+                    signupForm.classList.remove('hidden');
+                    return;
+                } else {
+                    sessionStorage.setItem('guestPrompted', '1');
+                }
+            }
+
+            addMessageToChat(message, 'user');
+            userInput.value = '';
+            await getAuraResponse(message);
+        }
         sendBtn.addEventListener('click', handleSend);
         userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
 
@@ -471,10 +840,10 @@
                 checkinBtn.classList.remove('bg-gradient-to-r');
                 checkinBtn.classList.add('bg-green-600', 'cursor-not-allowed');
             } else {
-                 checkinBtn.disabled = false;
-                 checkinBtn.textContent = "Check-in for Today";
-                 checkinBtn.classList.add('bg-gradient-to-r');
-                 checkinBtn.classList.remove('bg-green-600', 'cursor-not-allowed');
+                checkinBtn.disabled = false;
+                checkinBtn.textContent = "Check-in for Today";
+                checkinBtn.classList.add('bg-gradient-to-r');
+                checkinBtn.classList.remove('bg-green-600', 'cursor-not-allowed');
             }
             renderCalendar();
         }
@@ -486,7 +855,7 @@
             yesterday.setDate(today.getDate() - 1);
             let newStreak = 1;
             const lastCheckInDate = userData.lastCheckIn ? userData.lastCheckIn.toDate() : null;
-            if(lastCheckInDate && isSameDay(yesterday, lastCheckInDate)) { newStreak = userData.streak + 1; }
+            if (lastCheckInDate && isSameDay(yesterday, lastCheckInDate)) { newStreak = userData.streak + 1; }
             else if (lastCheckInDate && isSameDay(today, lastCheckInDate)) { return; }
             const userDocRef = doc(db, "users", currentUser.uid);
             const todayStr = today.toISOString().split('T')[0];
@@ -508,7 +877,7 @@
             const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             dayNames.forEach(day => calendarEl.innerHTML += `<div class='font-bold text-xs'>${day}</div>`);
             const firstDayOfMonth = new Date(year, month, 1).getDay();
-            for(let i=0; i < firstDayOfMonth; i++) { calendarEl.appendChild(document.createElement('div')); }
+            for (let i = 0; i < firstDayOfMonth; i++) { calendarEl.appendChild(document.createElement('div')); }
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const userHistory = new Set(userData.checkInHistory || []);
             for (let day = 1; day <= daysInMonth; day++) {
@@ -589,12 +958,12 @@
             reader.readAsDataURL(file);
         });
 
-        createPostBtn.addEventListener('click', async () => { 
+        createPostBtn.addEventListener('click', async () => {
             const content = modalPostContent.value.trim();
             const imageUrl = modalImagePreview.src.startsWith('data:image') ? modalImagePreview.src : '';
             if ((content || imageUrl) && currentUser && userData) {
                 await addDoc(collection(db, "communityPosts"), {
-                    userId: currentUser.uid, username: userData.username, 
+                    userId: currentUser.uid, username: userData.username,
                     authorPfp: userData.profilePicUrl || '', content, imageUrl,
                     streak: userData.streak || 0, timestamp: serverTimestamp()
                 });
@@ -626,7 +995,7 @@
             }, 1000);
         });
         function runBreatheCycle() {
-            const instructions = [ { text: "Breathe in...", duration: 4000 }, { text: "Hold", duration: 2000 }, { text: "Breathe out...", duration: 4000 } ];
+            const instructions = [{ text: "Breathe in...", duration: 4000 }, { text: "Hold", duration: 2000 }, { text: "Breathe out...", duration: 4000 }];
             let i = 0;
             function nextInstruction() {
                 breatheText.textContent = instructions[i].text;
@@ -683,7 +1052,7 @@
             Swal.fire({
                 toast: true, position: 'top-end', icon: 'success', title: 'Profile updated!',
                 showConfirmButton: false, timer: 2000,
-                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff', 
+                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff',
                 color: htmlEl.classList.contains('dark') ? '#ffffff' : '#000000'
             });
         });
@@ -827,4 +1196,5 @@
 
     </script>
 </body>
+
 </html>

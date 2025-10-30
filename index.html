@@ -499,7 +499,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, fetchSignInMethodsForEmail, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit, updateDoc, where, getDocs, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // =================================================================
@@ -615,21 +615,97 @@
         });
 
         document.getElementById('signup-btn').addEventListener('click', async () => {
-            const username = document.getElementById('signup-username').value;
-            const email = document.getElementById('signup-email').value;
+            const signupBtn = document.getElementById('signup-btn');
+            const username = document.getElementById('signup-username').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
             if (!username || !email || !password) { showAuthError("Please fill in all fields."); return; }
+
+            signupBtn.disabled = true;
+            signupBtn.classList.add('opacity-60', 'cursor-not-allowed');
             try {
+                // Proactively check if the email is already registered to avoid the common error
+                try {
+                    const methods = await fetchSignInMethodsForEmail(auth, email);
+                    if (methods && methods.length > 0) {
+                        // Email already registered
+                        showAuthError('This email is already registered. Please log in.');
+                        loginForm.classList.remove('hidden');
+                        signupForm.classList.add('hidden');
+                        document.getElementById('login-email').value = email;
+                        return;
+                    }
+                } catch (fetchErr) {
+                    // If the helper call fails, continue and let the create call handle errors
+                    console.warn('Could not check existing sign-in methods:', fetchErr);
+                }
+
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const newUserData = { username, email, streak: 0, lastCheckIn: null, checkInHistory: [], bio: "", profilePicUrl: "" };
                 await setDoc(doc(db, "users", userCredential.user.uid), newUserData);
-            } catch (error) { showAuthError(error.message); }
+
+                // Success: show the app immediately (auth state will also update)
+                authError.classList.add('hidden');
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('main-app-page').classList.remove('hidden');
+                document.getElementById('main-app-page').classList.add('flex');
+                setupNavListeners(true);
+                lucide.createIcons();
+                showPage('chat-page');
+            } catch (error) {
+                console.error('Signup error:', error);
+                // Handle common Firebase errors with friendly messages
+                if (error && error.code === 'auth/email-already-in-use') {
+                    showAuthError('This email is already registered. Please log in.');
+                    // Switch to login form and prefill email
+                    loginForm.classList.remove('hidden');
+                    signupForm.classList.add('hidden');
+                    document.getElementById('login-email').value = email;
+                } else if (error && error.code === 'auth/weak-password') {
+                    showAuthError('Password is too weak. Use at least 6 characters.');
+                } else if (error && error.code === 'auth/invalid-email') {
+                    showAuthError('Invalid email address.');
+                } else {
+                    showAuthError(error.message || 'Failed to create account.');
+                }
+            } finally {
+                signupBtn.disabled = false;
+                signupBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+            }
         });
+
         document.getElementById('login-btn').addEventListener('click', async () => {
-            const email = document.getElementById('login-email').value;
+            const loginBtn = document.getElementById('login-btn');
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
             if (!email || !password) { showAuthError("Please fill in all fields."); return; }
-            try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { showAuthError(error.message); }
+
+            loginBtn.disabled = true;
+            loginBtn.classList.add('opacity-60', 'cursor-not-allowed');
+            try {
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                authError.classList.add('hidden');
+
+                // Navigate to app immediately
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('main-app-page').classList.remove('hidden');
+                document.getElementById('main-app-page').classList.add('flex');
+                setupNavListeners(true);
+                lucide.createIcons();
+                showPage('chat-page');
+            } catch (error) {
+                console.error('Login error:', error);
+                if (error && (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password')) {
+                    showAuthError('Invalid email or password.');
+                } else if (error && error.code === 'auth/too-many-requests') {
+                    showAuthError('Too many failed attempts. Try again later.');
+                } else {
+                    showAuthError(error.message || 'Failed to sign in.');
+                }
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+            }
         });
         document.getElementById('logout-btn').addEventListener('click', () => {
             Swal.fire({

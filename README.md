@@ -71,21 +71,16 @@ Our goal is to make **mental wellness accessible and normal** in everyday life.
 Our core idea: create a solution that feels **less like a clinical tool and more like a supportive companion**.  
 
 ### Principles  
-1. **Anonymity & Safety First**  
-   - Engage anonymously with AI chat & streaks  
+1. **Anonymity & Safety First** - Engage anonymously with AI chat & streaks  
    - Social features are **opt-in** for full user control  
 
-2. **Gamification for Habit Building**  
-   - Inspired by **Duolingo** streaks  
+2. **Gamification for Habit Building** - Inspired by **Duolingo** streaks  
    - Rewards daily check-ins  
    - Encourages long-term positive habits  
 
-3. **Community over Isolation**  
-   - Friend system & community wall foster belonging  
+3. **Community over Isolation** - Friend system & community wall foster belonging  
    - Celebrate progress together  
-   - Show users they’re **not alone**  
-
----
+   - Show users they’re **not alone** ---
 
 ## 🚀 Key Features  
 - 🤖 **Empathetic AI Chatbot** – Powered by **Google’s Gemini API**, available 24/7  
@@ -140,4 +135,4 @@ For more, see: [Netlify docs: Environment variables](https://docs.netlify.com/en
 
 ### Clone the repo  
 ```bash
-git clone https://github.com/Garvitjoshi1/ZenithAI.git
+git clone [https://github.com/Garvitjoshi1/ZenithAI.git](https://github.com/Garvitjoshi1/ZenithAI.git)

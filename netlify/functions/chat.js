@@ -1,4 +1,4 @@
-/ This is your new secure "back office" function: netlify/functions/chat.js
+// This is your new secure "back office" function: netlify/functions/chat.js
 
 exports.handler = async function(event, context) {
   // Only allow POST requests

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<!-- Add dark class for dark mode as default -->
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenith Path - Your Mental Wellness Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- UI & Animation Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        // Tailwind dark mode config
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hidden { display: none !important; }
+
+        .aurora-bg {
+            /* Light mode aurora */
+            background-color: #f9fafb;
+             background-image:
+                radial-gradient(at 20% 15%, hsla(212,80%,80%,0.3) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, hsla(289,80%,80%,0.2) 0px, transparent 50%),
+                radial-gradient(at 15% 80%, hsla(180,80%,85%,0.3) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, hsla(30,80%,80%,0.2) 0px, transparent 50%);
+            animation: aurora-animation 20s infinite linear;
+        }
+        .dark .aurora-bg {
+            /* Dark mode aurora */
+            background-color: #111827;
+            background-image:
+                radial-gradient(at 20% 15%, hsla(212,80%,55%,0.2) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, hsla(289,80%,55%,0.2) 0px, transparent 50%),
+                radial-gradient(at 15% 80%, hsla(180,80%,60%,0.2) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, hsla(30,80%,55%,0.15) 0px, transparent 50%);
+        }
+
+        @keyframes aurora-animation { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .dark .glass-card {
+            background: rgba(31, 41, 55, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
+
+        .flame-icon.active { 
+            color: #f97316; 
+            animation: pulse-flame 2s infinite ease-in-out;
+        }
+        @keyframes pulse-flame {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 10px #f97316, 0 0 20px #f97316; }
+            50% { transform: scale(1.1); text-shadow: 0 0 20px #f97316, 0 0 40px #ef4444; }
+        }
+
+        .breathing-circle {
+            width: 200px; height: 200px; border-radius: 50%;
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 40px rgba(102, 166, 255, 0.6);
+            transition: transform 0.5s ease-out;
+        }
+        .breathing-circle.breathing { animation: breathe 10s infinite ease-in-out; }
+        @keyframes breathe {
+            0%   { transform: scale(1); } 40%  { transform: scale(1.5); }
+            60%  { transform: scale(1.5); } 100% { transform: scale(1); }
+        }
+
+        .toggle-switch {
+            width: 50px; height: 28px; background-color: #e5e7eb; border-radius: 9999px;
+            position: relative; cursor: pointer; transition: background-color 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .dark .toggle-switch { background-color: #374151; border: 1px solid rgba(255,255,255,0.1); }
+        .toggle-thumb {
+            width: 22px; height: 22px; background-color: white; border-radius: 9999px;
+            position: absolute; top: 2px; left: 2px; transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .dark .toggle-switch .toggle-thumb { transform: translateX(22px); }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-white/90 antialiased">
+
+    <div id="app-container" class="w-full h-screen flex flex-col">
+
+        <!-- AUTHENTICATION PAGE -->
+        <div id="auth-page" class="flex flex-col items-center justify-center h-full p-6 aurora-bg">
+             <div class="absolute top-6 right-6">
+                <div id="auth-theme-toggle" class="toggle-switch">
+                    <div class="toggle-thumb"></div>
+                </div>
+            </div>
+            <div class="text-center mb-10">
+                <h1 class="text-5xl font-extrabold text-slate-800 dark:text-white" style="text-shadow: 0 2px 10px rgba(0,0,0,0.1);">Zenith Path</h1>
+                <p class="text-slate-600 dark:text-white/70 mt-2">Find your calm, reach your peak.</p>
+            </div>
+            <div class="w-full max-w-sm p-8 rounded-2xl glass-card space-y-4">
+                <div id="auth-error" class="hidden p-3 bg-red-500/80 text-white rounded-lg text-sm"></div>
+                <!-- Login & Signup Forms -->
+                <div id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="password" id="login-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <button id="login-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Login</button>
+                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-slate-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or continue with</span></div></div>
+                    <button id="google-login-btn" class="w-full bg-white text-slate-800 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign in with Google</button>
+                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Don't have an account? <a href="#" id="show-signup" class="font-bold text-indigo-500 dark:text-indigo-400 hover:underline">Sign Up</a></p>
+                </div>
+                <div id="signup-form" class="hidden">
+                    <input type="text" id="signup-username" placeholder="Username" class="w-full px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="email" id="signup-email" placeholder="Email" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <input type="password" id="signup-password" placeholder="Password" class="w-full mt-3 px-4 py-3 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <button id="signup-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.5)]">Create Account</button>
+                    <div class="relative my-6"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-300 dark:border-white/20"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-gray-50 dark:bg-slate-800/25 px-2 text-slate-500 dark:text-white/60" style="backdrop-filter: blur(12px);">Or sign up with</span></div></div>
+                    <button id="google-signup-btn" class="w-full bg-white text-slate-800 font-medium py-3 rounded-lg hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center justify-center border border-gray-300"><svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.021,36.251,44,30.556,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>Sign up with Google</button>
+                    <p class="text-center text-sm text-slate-600 dark:text-white/70 mt-6">Already have an account? <a href="#" id="show-login" class="font-bold text-indigo-500 dark:text-indigo-400 hover:underline">Login</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN APP PAGE -->
+        <div id="main-app-page" class="hidden flex-col h-full aurora-bg">
+             <header class="bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg p-4 flex justify-between items-center border-b border-black/10 dark:border-white/10 sticky top-0 z-20">
+                <h1 class="text-xl font-bold text-slate-800 dark:text-white">Zenith Path</h1>
+                <div class="flex items-center space-x-4">
+                    <span id="welcome-user" class="text-slate-700 dark:text-white/80 text-sm font-medium hidden sm:block"></span>
+                    <div id="theme-toggle" class="toggle-switch">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                    <img id="header-pfp" src="https://placehold.co/40x40/1f2937/FFF?text=ZP" class="w-8 h-8 rounded-full object-cover border-2 border-white/20 cursor-pointer" title="Go to Profile">
+                    <button id="logout-btn" title="Logout"><i data-lucide="log-out" class="w-5 h-5 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white"></i></button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto custom-scrollbar">
+                <!-- Chat Page -->
+                <div id="chat-page" class="page-content flex flex-col h-full">
+                     <main id="chat-container" class="flex-1 p-6 overflow-y-auto custom-scrollbar">
+                        <div class="flex justify-start mb-4 chat-bubble"><div class="glass-card p-3 rounded-lg max-w-md shadow-lg bg-gray-200 dark:bg-gray-800/25"><p class="text-sm">Hello! I'm your companion on the path to wellness. How are you feeling today?</p></div></div>
+                    </main>
+                    <div id="loading-indicator" class="px-6 pb-2 hidden"><div class="flex items-center justify-start"><div class="glass-card p-3 rounded-lg shadow-lg animate-pulse"><div class="flex items-center space-x-2"><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-200"></div><div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-400"></div></div></div></div></div>
+                    <footer class="p-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg border-t border-black/10 dark:border-white/10 sticky bottom-0"><div class="flex items-center"><input type="text" id="user-input" placeholder="Type your message..." class="flex-1 px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"><button id="send-btn" class="ml-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]"><i data-lucide="send"></i></button></div></footer>
+                </div>
+
+                <!-- Streaks Page -->
+                <div id="streaks-page" class="page-content hidden p-6"><div class="w-full max-w-3xl mx-auto"><h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4">Your Wellness Streak</h2><div class="glass-card p-6 rounded-2xl text-center shadow-lg relative overflow-hidden"><p class="text-lg text-slate-700 dark:text-white/70">Current Streak</p><p id="streak-count" class="text-7xl font-extrabold my-2 text-slate-900 dark:text-white">0</p><p class="text-slate-700 dark:text-white/70">days of checking in!</p><button id="checkin-btn" class="mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.6)]">Check-in for Today</button></div><div id="quote-container" class="hidden mt-6 bg-green-500/10 border-l-4 border-green-400 text-green-700 dark:text-green-300 p-4 rounded-md"><p class="font-bold">Way to go!</p><p id="quote-text" class="text-sm"></p></div><div class="mt-8 glass-card p-4 rounded-xl"><h3 class="text-xl font-bold text-slate-800 dark:text-white mb-3">This Month's Progress</h3><div id="streak-calendar" class="grid grid-cols-7 gap-y-3 text-center text-lg text-slate-500 dark:text-white/50"></div></div></div></div>
+
+                <!-- Breathe Page -->
+                <div id="breathe-page" class="page-content hidden p-6"><div class="w-full max-w-3xl mx-auto text-center flex flex-col items-center justify-center h-full"><h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">A Moment of Calm</h2><div class="breathing-circle"><span id="breathe-text" class="text-white text-2xl font-bold">Ready?</span></div><p id="breathe-timer" class="text-slate-600 dark:text-white/60 mt-6 text-lg">2-Minute Session</p><div class="mt-6 flex space-x-4"><button id="start-breathe-btn" class="bg-gradient-to-r from-green-400 to-teal-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(16,185,129,0.5)]">Start</button><button id="stop-breathe-btn" class="hidden bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(239,68,68,0.5)]">Stop</button></div></div></div>
+
+                <!-- Community Page -->
+                <div id="community-page" class="page-content hidden p-6">
+                     <div class="w-full max-w-3xl mx-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Community Wall</h2>
+                            <button id="open-post-modal-btn" class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)] flex items-center space-x-2">
+                                <i data-lucide="plus"></i>
+                                <span>Create Post</span>
+                            </button>
+                        </div>
+                        <div id="community-feed" class="mt-6 space-y-4"></div>
+                    </div>
+                </div>
+
+                <!-- Friends Page -->
+                <div id="friends-page" class="page-content hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4">Friends</h2>
+                        <div class="flex border-b border-gray-300 dark:border-white/20 mb-4">
+                            <button data-tab="my-friends" class="friends-tab-btn px-4 py-2 font-semibold border-b-2 border-indigo-500 text-indigo-500">My Friends</button>
+                            <button data-tab="requests" class="friends-tab-btn px-4 py-2 font-semibold text-slate-500 dark:text-white/60">Requests</button>
+                            <button data-tab="find-friends" class="friends-tab-btn px-4 py-2 font-semibold text-slate-500 dark:text-white/60">Find Friends</button>
+                        </div>
+                        <div id="my-friends-content" class="friends-tab-content space-y-3"></div>
+                        <div id="requests-content" class="friends-tab-content hidden space-y-3"></div>
+                        <div id="find-friends-content" class="friends-tab-content hidden space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div id="profile-page" class="page-content hidden p-6">
+                    <div class="w-full max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">Your Profile</h2>
+                        <div class="glass-card p-8 rounded-2xl flex flex-col items-center sm:flex-row sm:items-start space-y-6 sm:space-y-0 sm:space-x-8">
+                            <div class="relative group">
+                                <img id="profile-pic-preview" src="https://placehold.co/150x150/1f2937/FFF?text=+" class="w-36 h-36 rounded-full object-cover border-2 border-gray-300 dark:border-white/20">
+                                <label for="pfp-upload" class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <i data-lucide="camera" class="w-8 h-8"></i>
+                                </label>
+                                <input type="file" id="pfp-upload" class="hidden" accept="image/*">
+                            </div>
+                            <div class="flex-1 w-full">
+                                <div>
+                                    <label for="profile-username" class="text-sm text-slate-600 dark:text-white/70">Username</label>
+                                    <input type="text" id="profile-username" class="mt-1 w-full px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                </div>
+                                <div class="mt-4">
+                                    <label for="profile-bio" class="text-sm text-slate-600 dark:text-white/70">Your Bio</label>
+                                    <textarea id="profile-bio" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="A short bio about your wellness journey..."></textarea>
+                                </div>
+                                <button id="save-profile-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Navigation -->
+            <nav class="flex justify-around bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg p-2 border-t border-black/10 dark:border-white/10 sticky bottom-0 z-20">
+                <button data-page="chat-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="message-circle"></i><span class="text-xs mt-1">Chat</span></button>
+                <button data-page="streaks-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="flame"></i><span class="text-xs mt-1">Streaks</span></button>
+                <button data-page="breathe-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="wind"></i><span class="text-xs mt-1">Breathe</span></button>
+                <button data-page="community-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="users"></i><span class="text-xs mt-1">Community</span></button>
+                <button data-page="friends-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="user-check"></i><span class="text-xs mt-1">Friends</span></button>
+                <button data-page="profile-page" class="nav-btn p-2 rounded-lg w-full flex flex-col items-center text-slate-600 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"><i data-lucide="user-circle"></i><span class="text-xs mt-1">Profile</span></button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div id="post-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-lg rounded-2xl shadow-xl p-6 relative">
+            <button id="close-post-modal-btn" class="absolute top-4 right-4 text-slate-500 dark:text-white/60 hover:text-slate-800 dark:hover:text-white">
+                <i data-lucide="x"></i>
+            </button>
+            <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-4">Create a New Post</h2>
+
+            <textarea id="modal-post-content" class="w-full p-2 h-28 bg-gray-200 dark:bg-white/10 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/60 border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Share your thoughts..."></textarea>
+
+            <div class="mt-4">
+                <img id="modal-image-preview" src="" class="hidden w-full max-h-48 object-contain rounded-lg mb-2">
+                <label for="modal-image-upload" class="cursor-pointer text-sm text-indigo-500 dark:text-indigo-400 font-semibold hover:underline flex items-center space-x-2">
+                    <i data-lucide="image-plus"></i>
+                    <span>Add Image</span>
+                </label>
+                <input type="file" id="modal-image-upload" class="hidden" accept="image/*">
+            </div>
+
+            <div class="mt-4 border-t border-black/10 dark:border-white/10 pt-4">
+                <h3 class="text-sm font-semibold text-slate-600 dark:text-white/70 mb-2">Feeling proud? Share your streak!</h3>
+                <div id="streak-templates-container" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <button id="create-post-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:scale-105 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.5)]">Post to Community</button>
+        </div>
+    </div>
+
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit, updateDoc, where, getDocs, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDViVrJ9agi89g7cG51SVP9ECHDk5YNGoM",
+            authDomain: "auraai-472617.firebaseapp.com",
+            projectId: "auraai-472617",
+            storageBucket: "auraai-472617.appspot.com",
+            messagingSenderId: "1077227113610",
+            appId: "1:1077227113610:web:846934fd5147f430a07173",
+            measurementId: "G-PY62KH8QGE"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider(); 
+        let currentUser = null;
+        let userData = null;
+
+        // --- THEME TOGGLE ---
+        const themeToggleBtns = document.querySelectorAll('#theme-toggle, #auth-theme-toggle');
+        const htmlEl = document.documentElement;
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) { htmlEl.classList.toggle('dark', savedTheme === 'dark'); }
+        themeToggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                htmlEl.classList.toggle('dark');
+                localStorage.setItem('theme', htmlEl.classList.contains('dark') ? 'dark' : 'light');
+            });
+        });
+
+        // --- Master Auth State Change Handler ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists()) {
+                    userData = userDocSnap.data();
+                } else { 
+                     const newUserData = {
+                        username: user.displayName || 'Zenith User', email: user.email,
+                        streak: 0, lastCheckIn: null, checkInHistory: [],
+                        bio: "", profilePicUrl: ""
+                    };
+                     await setDoc(doc(db, "users", user.uid), newUserData);
+                     userData = newUserData;
+                }
+                document.getElementById('welcome-user').textContent = `Hi, ${userData.username}!`;
+                document.getElementById('header-pfp').src = userData.profilePicUrl || `https://placehold.co/40x40/1f2937/FFF?text=${(userData.username || 'Z').charAt(0)}`;
+
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('main-app-page').classList.remove('hidden');
+                document.getElementById('main-app-page').classList.add('flex');
+                setupAppForUser();
+            } else {
+                currentUser = null; userData = null;
+                document.getElementById('auth-page').classList.remove('hidden');
+                document.getElementById('main-app-page').classList.add('hidden');
+            }
+        });
+
+        // --- Auth UI & Functions ---
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const authError = document.getElementById('auth-error');
+        const showAuthError = (message) => { authError.textContent = message; authError.classList.remove('hidden'); };
+        document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.add('hidden'); signupForm.classList.remove('hidden'); });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); signupForm.classList.add('hidden'); loginForm.classList.remove('hidden'); });
+
+        document.getElementById('signup-btn').addEventListener('click', async () => { 
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            if (!username || !email || !password) { showAuthError("Please fill in all fields."); return; }
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const newUserData = { username, email, streak: 0, lastCheckIn: null, checkInHistory: [], bio: "", profilePicUrl: "" };
+                await setDoc(doc(db, "users", userCredential.user.uid), newUserData);
+            } catch (error) { showAuthError(error.message); }
+        });
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            if (!email || !password) { showAuthError("Please fill in all fields."); return; }
+            try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { showAuthError(error.message); }
+        });
+         document.getElementById('logout-btn').addEventListener('click', () => {
+             Swal.fire({
+                title: 'Are you sure?', text: "You will be logged out.", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, logout', 
+                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff', 
+                color: htmlEl.classList.contains('dark') ? '#ffffff' : '#000000'
+            }).then((result) => { if (result.isConfirmed) { signOut(auth); } })
+        });
+        const handleGoogleSignIn = async () => {
+            authError.classList.add('hidden');
+            try { await signInWithPopup(auth, googleProvider); } catch (error) { showAuthError(error.message); }
+        };
+        document.getElementById('google-login-btn').addEventListener('click', handleGoogleSignIn);
+        document.getElementById('google-signup-btn').addEventListener('click', handleGoogleSignIn);
+        document.getElementById('header-pfp').addEventListener('click', () => showPage('profile-page'));
+
+        function setupAppForUser() {
+            lucide.createIcons();
+            showPage('streaks-page');
+            setupStreaks();
+            setupProfile();
+            setupCommunity();
+            setupFriends();
+        }
+
+        // --- Page Navigation with GSAP Animation ---
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const contentPages = document.querySelectorAll('.page-content');
+        let currentPageId = null;
+        function showPage(pageId) {
+            if (pageId === currentPageId) return;
+            const oldPage = document.getElementById(currentPageId);
+            const newPage = document.getElementById(pageId);
+
+            if (oldPage) {
+                gsap.to(oldPage, { autoAlpha: 0, y: 10, duration: 0.2, onComplete: () => oldPage.classList.add('hidden') });
+            }
+
+            newPage.classList.remove('hidden');
+            gsap.fromTo(newPage, { autoAlpha: 0, y: -10 }, { autoAlpha: 1, y: 0, duration: 0.2, delay: oldPage ? 0.2 : 0 });
+
+            if (['chat-page', 'breathe-page'].includes(pageId)) { newPage.classList.add('flex', 'flex-col', 'h-full'); }
+
+            navButtons.forEach(btn => {
+                const isSelected = btn.dataset.page === pageId;
+                btn.classList.toggle('bg-black/5', !htmlEl.classList.contains('dark') && isSelected);
+                btn.classList.toggle('dark:bg-white/10', htmlEl.classList.contains('dark') && isSelected);
+                btn.classList.toggle('text-slate-900', !htmlEl.classList.contains('dark') && isSelected);
+                btn.classList.toggle('dark:text-white', htmlEl.classList.contains('dark') && isSelected);
+                btn.classList.toggle('text-slate-600', !htmlEl.classList.contains('dark') && !isSelected);
+                btn.classList.toggle('dark:text-white/60', htmlEl.classList.contains('dark') && !isSelected);
+            });
+            currentPageId = pageId;
+        }
+        navButtons.forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
+
+        // --- Gemini API Setup ---
+        const API_URL = `/.netlify/functions/chat`;
+
+
+        // --- Chatbot Logic ---
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        async function getAuraResponse(message) {
+            loadingIndicator.classList.remove('hidden');
+            try {
+        // UPDATED: The payload now includes the system prompt to send to our function
+        const payload = { message: message, systemPrompt: CHATBOT_SYSTEM_PROMPT };
+        const response = await fetch(API_URL, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(payload) 
+        });
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                const result = await response.json();
+                const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                addMessageToChat(aiText || "I'm having trouble thinking right now.", 'ai');
+            } catch (error) { addMessageToChat("Oops! Something went wrong on my end.", 'ai'); console.error(error);
+            } finally { loadingIndicator.classList.add('hidden'); }
+        }
+        function addMessageToChat(message, sender) { 
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex mb-4 chat-bubble ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            msgDiv.innerHTML = `<div class="glass-card p-3 rounded-xl max-w-md shadow-lg ${sender === 'user' ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white' : 'bg-gray-200 dark:bg-gray-800/25'}"><p class="text-sm">${message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p></div>`;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            gsap.from(msgDiv, { opacity: 0, y: 20, duration: 0.5, ease: "power3.out" });
+        }
+        function handleSend() { const message = userInput.value.trim(); if (message) { addMessageToChat(message, 'user'); userInput.value = ''; getAuraResponse(message); } }
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+
+        // --- Streaks Logic ---
+        const streakCountEl = document.getElementById('streak-count');
+        const checkinBtn = document.getElementById('checkin-btn');
+        const calendarEl = document.getElementById('streak-calendar');
+        const quoteContainer = document.getElementById('quote-container');
+        const quoteTextEl = document.getElementById('quote-text');
+        const motivationalQuotes = ["Believe you can and you're halfway there.", "The secret of getting ahead is getting started.", "Your limitation—it's only your imagination."];
+        function isSameDay(d1, d2) { return d1 && d2 && d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
+
+        function setupStreaks() {
+            const currentStreak = userData.streak || 0;
+            let start = { val: parseInt(streakCountEl.textContent) || 0 };
+            gsap.to(start, { duration: 1, val: currentStreak, onUpdate: () => { streakCountEl.textContent = Math.round(start.val); } });
+            const today = new Date();
+            const lastCheckInDate = userData.lastCheckIn ? userData.lastCheckIn.toDate() : null;
+            if (lastCheckInDate && isSameDay(today, lastCheckInDate)) {
+                checkinBtn.disabled = true;
+                checkinBtn.textContent = "Checked-in Today!";
+                checkinBtn.classList.remove('bg-gradient-to-r');
+                checkinBtn.classList.add('bg-green-600', 'cursor-not-allowed');
+            } else {
+                 checkinBtn.disabled = false;
+                 checkinBtn.textContent = "Check-in for Today";
+                 checkinBtn.classList.add('bg-gradient-to-r');
+                 checkinBtn.classList.remove('bg-green-600', 'cursor-not-allowed');
+            }
+            renderCalendar();
+        }
+
+        checkinBtn.addEventListener('click', async () => {
+            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+            let newStreak = 1;
+            const lastCheckInDate = userData.lastCheckIn ? userData.lastCheckIn.toDate() : null;
+            if(lastCheckInDate && isSameDay(yesterday, lastCheckInDate)) { newStreak = userData.streak + 1; }
+            else if (lastCheckInDate && isSameDay(today, lastCheckInDate)) { return; }
+            const userDocRef = doc(db, "users", currentUser.uid);
+            const todayStr = today.toISOString().split('T')[0];
+            const newHistory = [...new Set([...(userData.checkInHistory || []), todayStr])];
+            await updateDoc(userDocRef, { streak: newStreak, lastCheckIn: serverTimestamp(), checkInHistory: newHistory });
+            userData.streak = newStreak;
+            userData.lastCheckIn = { toDate: () => new Date() };
+            userData.checkInHistory = newHistory;
+            quoteTextEl.textContent = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+            quoteContainer.classList.remove('hidden');
+            setupStreaks();
+        });
+
+        function renderCalendar() {
+            calendarEl.innerHTML = '';
+            const today = new Date();
+            const month = today.getMonth();
+            const year = today.getFullYear();
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayNames.forEach(day => calendarEl.innerHTML += `<div class='font-bold text-xs'>${day}</div>`);
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            for(let i=0; i < firstDayOfMonth; i++) { calendarEl.appendChild(document.createElement('div')); }
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const userHistory = new Set(userData.checkInHistory || []);
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isCheckedIn = userHistory.has(dateStr);
+                const dayEl = document.createElement('div');
+                dayEl.innerHTML = `<i data-lucide="flame" class="inline-block flame-icon ${isCheckedIn ? 'active' : ''}"></i>`;
+                calendarEl.appendChild(dayEl);
+            }
+            lucide.createIcons();
+        }
+
+        // --- Community & Post Modal Logic ---
+        const communityFeedEl = document.getElementById('community-feed');
+        const postModal = document.getElementById('post-modal');
+        const openPostModalBtn = document.getElementById('open-post-modal-btn');
+        const closePostModalBtn = document.getElementById('close-post-modal-btn');
+        const modalPostContent = document.getElementById('modal-post-content');
+        const modalImageUpload = document.getElementById('modal-image-upload');
+        const modalImagePreview = document.getElementById('modal-image-preview');
+        const templatesContainer = document.getElementById('streak-templates-container');
+        const createPostBtn = document.getElementById('create-post-btn');
+
+        function setupCommunity() {
+            const q = query(collection(db, "communityPosts"), orderBy("timestamp", "desc"), limit(25));
+            onSnapshot(q, (querySnapshot) => {
+                communityFeedEl.innerHTML = '';
+                querySnapshot.forEach(renderCommunityPost);
+            });
+        }
+        function renderCommunityPost(doc) {
+            const post = doc.data();
+            const postEl = document.createElement('div');
+            postEl.className = 'glass-card p-4 rounded-lg shadow-lg';
+            const postDate = post.timestamp ? post.timestamp.toDate().toLocaleDateString() : 'Just now';
+            const imageUrlHTML = post.imageUrl ? `<img src="${post.imageUrl}" class="mt-3 rounded-lg w-full object-cover max-h-72">` : '';
+
+            postEl.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <img src="${post.authorPfp || `https://placehold.co/40x40/1f2937/FFF?text=${(post.username || 'Z').charAt(0)}`}" class="w-10 h-10 rounded-full object-cover border-2 border-white/20">
+                    <div>
+                        <p class="font-semibold text-slate-800 dark:text-white">${post.username} <span class="text-xs text-slate-500 dark:text-white/50 font-normal">| Streak: 🔥${post.streak}</span></p>
+                        <p class="text-sm text-slate-700 dark:text-white/80 mt-1">${post.content}</p>
+                        <p class="text-xs text-slate-400 dark:text-white/40 mt-2">${postDate}</p>
+                    </div>
+                </div>
+                ${imageUrlHTML}
+            `;
+            communityFeedEl.appendChild(postEl);
+        }
+
+        openPostModalBtn.addEventListener('click', () => {
+            modalPostContent.value = '';
+            modalImagePreview.src = '';
+            modalImagePreview.classList.add('hidden');
+            const streak = userData.streak || 0;
+            templatesContainer.innerHTML = '';
+            if (streak > 0) {
+                const templates = [`🎉 Just hit my ${streak}-day streak! Feeling proud.`, `Keeping the 🔥 alive with a ${streak}-day streak!`, `Consistency is key! Day ${streak} checked in. ✅`];
+                templates.forEach(text => {
+                    const btn = document.createElement('button');
+                    btn.className = 'text-xs bg-purple-500/20 text-purple-600 dark:text-purple-300 px-2 py-1 rounded-md hover:bg-purple-500/40';
+                    btn.textContent = text;
+                    btn.onclick = () => { modalPostContent.value = text; };
+                    templatesContainer.appendChild(btn);
+                });
+            } else { templatesContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-white/50">Check-in to unlock streak templates!</p>`; }
+            postModal.classList.remove('hidden');
+            gsap.fromTo(postModal, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 });
+            lucide.createIcons();
+        });
+        closePostModalBtn.addEventListener('click', () => { gsap.to(postModal, { autoAlpha: 0, duration: 0.3, onComplete: () => postModal.classList.add('hidden') }); });
+
+        modalImageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => { modalImagePreview.src = event.target.result; modalImagePreview.classList.remove('hidden'); };
+            reader.readAsDataURL(file);
+        });
+
+        createPostBtn.addEventListener('click', async () => { 
+            const content = modalPostContent.value.trim();
+            const imageUrl = modalImagePreview.src.startsWith('data:image') ? modalImagePreview.src : '';
+            if ((content || imageUrl) && currentUser && userData) {
+                await addDoc(collection(db, "communityPosts"), {
+                    userId: currentUser.uid, username: userData.username, 
+                    authorPfp: userData.profilePicUrl || '', content, imageUrl,
+                    streak: userData.streak || 0, timestamp: serverTimestamp()
+                });
+                closePostModalBtn.click();
+            }
+        });
+
+        // --- Guided Breathing Logic ---
+        const breatheCircle = document.querySelector('.breathing-circle');
+        const breatheText = document.getElementById('breathe-text');
+        const breatheTimerEl = document.getElementById('breathe-timer');
+        const startBreatheBtn = document.getElementById('start-breathe-btn');
+        const stopBreatheBtn = document.getElementById('stop-breathe-btn');
+        let breatheInterval; let breatheCycleTimeout;
+
+        startBreatheBtn.addEventListener('click', () => {
+            breatheCircle.classList.add('breathing');
+            startBreatheBtn.classList.add('hidden');
+            stopBreatheBtn.classList.remove('hidden');
+            runBreatheCycle();
+            let timeLeft = 120;
+            breatheTimerEl.textContent = "2:00 remaining";
+            breatheInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                breatheTimerEl.textContent = `${minutes}:${String(seconds).padStart(2, '0')} remaining`;
+                if (timeLeft <= 0) stopBreathing();
+            }, 1000);
+        });
+        function runBreatheCycle() {
+            const instructions = [ { text: "Breathe in...", duration: 4000 }, { text: "Hold", duration: 2000 }, { text: "Breathe out...", duration: 4000 } ];
+            let i = 0;
+            function nextInstruction() {
+                breatheText.textContent = instructions[i].text;
+                breatheCycleTimeout = setTimeout(nextInstruction, instructions[i].duration);
+                i = (i + 1) % instructions.length;
+            }
+            nextInstruction();
+        }
+        function stopBreathing(isReset = false) {
+            breatheCircle.classList.remove('breathing');
+            startBreatheBtn.classList.remove('hidden');
+            stopBreatheBtn.classList.add('hidden');
+            clearInterval(breatheInterval);
+            clearTimeout(breatheCycleTimeout);
+            breatheText.textContent = isReset ? "Ready?" : "Great job!";
+            breatheTimerEl.textContent = isReset ? "2-Minute Session" : "Session Complete";
+        }
+        stopBreatheBtn.addEventListener('click', () => stopBreathing(false));
+
+        // --- Profile Page Logic ---
+        const profilePicPreview = document.getElementById('profile-pic-preview');
+        const pfpUpload = document.getElementById('pfp-upload');
+        const profileUsername = document.getElementById('profile-username');
+        const profileBio = document.getElementById('profile-bio');
+
+        function setupProfile() {
+            profileUsername.value = userData.username || '';
+            profileBio.value = userData.bio || '';
+            profilePicPreview.src = userData.profilePicUrl || `https://placehold.co/150x150/1f2937/FFF?text=${(userData.username || 'Z').charAt(0)}`;
+        }
+
+        pfpUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => { profilePicPreview.src = event.target.result; };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('save-profile-btn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            const newUsername = profileUsername.value.trim();
+            const newBio = profileBio.value.trim();
+            const newPfp = profilePicPreview.src;
+
+            const userDocRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userDocRef, { username: newUsername, bio: newBio, profilePicUrl: newPfp });
+
+            userData.username = newUsername;
+            userData.bio = newBio;
+            userData.profilePicUrl = newPfp;
+            document.getElementById('welcome-user').textContent = `Hi, ${newUsername}!`;
+            document.getElementById('header-pfp').src = newPfp;
+
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success', title: 'Profile updated!',
+                showConfirmButton: false, timer: 2000,
+                background: htmlEl.classList.contains('dark') ? '#1f2937' : '#ffffff', 
+                color: htmlEl.classList.contains('dark') ? '#ffffff' : '#000000'
+            });
+        });
+
+        // --- Friends Logic ---
+        const friendsTabBtns = document.querySelectorAll('.friends-tab-btn');
+        const friendsTabContents = document.querySelectorAll('.friends-tab-content');
+
+        friendsTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                friendsTabBtns.forEach(b => {
+                    b.classList.remove('border-indigo-500', 'text-indigo-500', 'dark:text-indigo-400');
+                    b.classList.add('text-slate-500', 'dark:text-white/60', 'border-transparent');
+                });
+                btn.classList.add('border-indigo-500', 'text-indigo-500', 'dark:text-indigo-400');
+                btn.classList.remove('text-slate-500', 'dark:text-white/60', 'border-transparent');
+
+                friendsTabContents.forEach(content => content.classList.add('hidden'));
+                document.getElementById(`${btn.dataset.tab}-content`).classList.remove('hidden');
+
+                if (btn.dataset.tab === 'find-friends') { fetchAllUsers(); }
+            });
+        });
+
+        async function setupFriends() {
+            if (!currentUser) return;
+            const myFriendsRef = collection(db, 'users', currentUser.uid, 'friends');
+            onSnapshot(myFriendsRef, async (snapshot) => {
+                const friendsListEl = document.getElementById('my-friends-content');
+                if (snapshot.empty) {
+                    friendsListEl.innerHTML = `<p class="text-slate-500 dark:text-white/50 text-center">You haven't added any friends yet. Go to the "Find Friends" tab to connect with others!</p>`;
+                    return;
+                }
+                friendsListEl.innerHTML = '';
+                for (const friendDoc of snapshot.docs) {
+                    const friendDataSnap = await getDoc(doc(db, 'users', friendDoc.id));
+                    if (friendDataSnap.exists()) {
+                        renderFriend(friendsListEl, friendDataSnap.data(), friendDataSnap.id);
+                    }
+                }
+            });
+            const requestsRef = collection(db, 'friendRequests');
+            const q = query(requestsRef, where('to', '==', currentUser.uid), where('status', '==', 'pending'));
+            onSnapshot(q, (snapshot) => {
+                const requestsListEl = document.getElementById('requests-content');
+                if (snapshot.empty) {
+                    requestsListEl.innerHTML = `<p class="text-slate-500 dark:text-white/50 text-center">No new friend requests.</p>`;
+                    return;
+                }
+                requestsListEl.innerHTML = '';
+                snapshot.forEach(doc => {
+                    renderFriendRequest(requestsListEl, doc.data(), doc.id);
+                });
+            });
+        }
+        function renderFriend(container, friendData, friendId) {
+            const el = document.createElement('div');
+            el.className = 'glass-card p-3 rounded-lg flex items-center justify-between';
+            el.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <img src="${friendData.profilePicUrl || `https://placehold.co/40x40/1f2937/FFF?text=${(friendData.username || 'Z').charAt(0)}`}" class="w-10 h-10 rounded-full object-cover">
+                    <span class="font-semibold">${friendData.username}</span>
+                </div>
+                <div class="text-right">
+                    <span class="font-bold text-lg">🔥 ${friendData.streak || 0}</span>
+                    <p class="text-xs text-slate-500 dark:text-white/50">Streak</p>
+                </div>
+            `;
+            container.appendChild(el);
+        }
+        function renderFriendRequest(container, requestData, requestId) {
+            const el = document.createElement('div');
+            el.className = 'glass-card p-3 rounded-lg flex items-center justify-between';
+            el.innerHTML = `
+                <span class="font-semibold">${requestData.fromUsername} wants to be your friend.</span>
+                <div class="flex space-x-2">
+                    <button data-id="${requestId}" data-from="${requestData.from}" class="accept-request-btn bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600">Accept</button>
+                    <button data-id="${requestId}" class="decline-request-btn bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600">Decline</button>
+                </div>
+            `;
+            container.appendChild(el);
+        }
+        async function fetchAllUsers() {
+            const findFriendsEl = document.getElementById('find-friends-content');
+            findFriendsEl.innerHTML = `<p class="text-center animate-pulse">Loading users...</p>`;
+
+            const [usersSnapshot, myFriendsSnapshot, pendingRequestsSnapshot] = await Promise.all([
+                getDocs(collection(db, 'users')),
+                getDocs(collection(db, 'users', currentUser.uid, 'friends')),
+                getDocs(query(collection(db, 'friendRequests'), where('from', '==', currentUser.uid)))
+            ]);
+
+            const myFriendIds = new Set(myFriendsSnapshot.docs.map(d => d.id));
+            const pendingRequestIds = new Set(pendingRequestsSnapshot.docs.map(d => d.data().to));
+
+            findFriendsEl.innerHTML = '';
+            usersSnapshot.forEach(doc => {
+                if (doc.id === currentUser.uid || myFriendIds.has(doc.id)) return;
+                const userData = doc.data();
+                const el = document.createElement('div');
+                el.className = 'glass-card p-3 rounded-lg flex items-center justify-between';
+                let buttonHtml = `<button data-id="${doc.id}" class="add-friend-btn bg-indigo-500 text-white px-3 py-1 rounded-md text-sm hover:bg-indigo-600 flex items-center space-x-1"><i data-lucide="user-plus" class="w-4 h-4"></i><span>Add</span></button>`;
+                if (pendingRequestIds.has(doc.id)) {
+                    buttonHtml = `<span class="text-xs text-slate-400">Request Sent</span>`;
+                }
+
+                el.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <img src="${userData.profilePicUrl || `https://placehold.co/40x40/1f2937/FFF?text=${(userData.username || 'Z').charAt(0)}`}" class="w-10 h-10 rounded-full object-cover">
+                        <span class="font-semibold">${userData.username}</span>
+                    </div>
+                    ${buttonHtml}
+                `;
+                findFriendsEl.appendChild(el);
+            });
+            lucide.createIcons();
+        }
+        document.addEventListener('click', async (e) => {
+            if (e.target.closest('.add-friend-btn')) {
+                const btn = e.target.closest('.add-friend-btn');
+                const toId = btn.dataset.id;
+                await addDoc(collection(db, 'friendRequests'), {
+                    from: currentUser.uid, fromUsername: userData.username, to: toId, status: 'pending'
+                });
+                btn.outerHTML = `<span class="text-xs text-slate-400">Request Sent</span>`;
+            }
+            if (e.target.closest('.accept-request-btn')) {
+                const btn = e.target.closest('.accept-request-btn');
+                const requestId = btn.dataset.id; const fromId = btn.dataset.from;
+                const batch = writeBatch(db);
+                batch.set(doc(db, 'users', currentUser.uid, 'friends', fromId), {});
+                batch.set(doc(db, 'users', fromId, 'friends', currentUser.uid), {});
+                batch.delete(doc(db, 'friendRequests', requestId));
+                await batch.commit();
+            }
+            if (e.target.closest('.decline-request-btn')) {
+                const btn = e.target.closest('.decline-request-btn');
+                await deleteDoc(doc(db, 'friendRequests', btn.dataset.id));
+            }
+        });
+
+    </script>
+</body>
+</html>

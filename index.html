@@ -499,7 +499,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, fetchSignInMethodsForEmail, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, fetchSignInMethodsForEmail, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, serverTimestamp, orderBy, limit, updateDoc, where, getDocs, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // =================================================================
@@ -539,17 +539,17 @@
         // --- Master Auth State Change Handler ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // --- LOGGED-IN USER ---
                 currentUser = user;
                 const userDocRef = doc(db, "users", user.uid);
                 const userDocSnap = await getDoc(userDocRef);
                 if (userDocSnap.exists()) {
                     userData = userDocSnap.data();
                 } else {
+                    // Create new user doc if it's a first-time Google sign-in
                     const newUserData = {
                         username: user.displayName || 'Zenith User', email: user.email,
                         streak: 0, lastCheckIn: null, checkInHistory: [],
-                        bio: "", profilePicUrl: ""
+                        bio: "", profilePicUrl: user.photoURL || ""
                     };
                     await setDoc(doc(db, "users", user.uid), newUserData);
                     userData = newUserData;
@@ -570,25 +570,15 @@
                 setupAppForUser(); // This sets up streaks, profile, etc.
                 setupNavListeners(true); // true = isLoggedIn
             } else {
-                // --- GUEST USER ---
+                // --- NOT LOGGED IN (SHOW LOGIN SCREEN) ---
                 currentUser = null;
                 userData = null;
 
-                // Hide personalized header items
-                document.getElementById('welcome-user').classList.add('hidden');
-                document.getElementById('header-pfp').classList.add('hidden');
-                document.getElementById('logout-btn').classList.add('hidden');
-
-                // Show app, hide auth page
-                document.getElementById('auth-page').classList.add('hidden');
-                document.getElementById('main-app-page').classList.remove('hidden');
-                document.getElementById('main-app-page').classList.add('flex');
-
-                setupNavListeners(false); // false = isGuest
-
-                // Show chat page by default for guests
-                lucide.createIcons();
-                showPage('chat-page');
+                // Show auth page, hide app
+                document.getElementById('auth-page').classList.remove('hidden');
+                document.getElementById('auth-page').classList.add('flex');
+                document.getElementById('main-app-page').classList.add('hidden');
+                document.getElementById('main-app-page').classList.remove('flex');
             }
         });
 
